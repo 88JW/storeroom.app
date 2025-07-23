@@ -6,7 +6,7 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  /* color: rgba(255, 255, 255, 0.87); */ /* Usuwamy domyślny kolor z root */
   background-color: #ffffff;
 
   font-synthesis: none;
@@ -30,6 +30,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  color: #000000; /* Ustawiamy globalny kolor tekstu na czarny */
 }
 
 h1 {
@@ -58,7 +59,7 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
+    color: #213547; /* Możemy dostosować kolory dla trybu jasnego jeśli potrzeba */
     background-color: #ffffff;
   }
   a:hover {

@@ -1,7 +1,10 @@
-import React from 'react';
-import { Container, TextField, Button, Typography, Box, Link } from '@mui/material';
+import React, { useState } from 'react';
+import { Container, TextField, Button, Typography, Box, Link, Alert } from '@mui/material'; // Dodajemy Alert
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'; // Przykład ikony, którą możemy zastąpić
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { useNavigate } from 'react-router-dom'; // Importujemy useNavigate
+import { signInWithEmailAndPassword } from 'firebase/auth'; // Importujemy metodę logowania z Firebase Auth
+import { auth } from '../firebase'; // Importujemy instancję auth z naszej konfiguracji Firebase
 
 // Tymczasowa definicja prostego motywu Material UI
 // Będziemy go rozbudowywać w miarę potrzeby, aby odzwierciedlić kolory ze Stichu
@@ -70,6 +73,35 @@ const theme = createTheme({
 });
 
 const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null); // Stan do wyświetlania błędów
+  const navigate = useNavigate(); // Hook do nawigacji
+
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  };
+
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => { // Zmieniamy na async
+    event.preventDefault();
+    setError(null); // Czyścimy poprzednie błędy
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      // Logowanie udane
+      console.log('Zalogowano pomyślnie!', userCredential.user);
+      // Przekieruj użytkownika na inną stronę, np. /lista
+      navigate('/lista'); // Zakładamy, że masz trasę /lista
+    } catch (error: any) { // Obsługa błędów logowania
+      console.error('Błąd logowania:', error);
+      setError(error.message); // Ustaw komunikat błędu w stanie
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -79,12 +111,10 @@ const LoginPage: React.FC = () => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            spacing: 8, // odpowiada space-y-8 ze Stichu
+            spacing: 8,
           }}
         >
           <Box sx={{ textAlign: 'center' }}>
-            {/* Tutaj możemy dodać ikonę, np. z Material UI icons */}
-            {/* Na razie użyjemy LockOutlinedIcon jako placeholder */}
             <LockOutlinedIcon sx={{ fontSize: 40, color: 'primary.main' }} />
             <Typography component="h1" variant="h5" sx={{ marginTop: 2 }}>
               Witaj z powrotem
@@ -93,7 +123,7 @@ const LoginPage: React.FC = () => {
               Zaloguj się, aby zarządzać swoją lodówką.
             </Typography>
           </Box>
-          <Box component="form" noValidate sx={{ mt: 3, width: '100%', spacing: 6 }}> {/* spacing 6 odpowiada space-y-6 */}
+          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3, width: '100%', spacing: 6 }}>
             <TextField
               margin="normal"
               required
@@ -103,7 +133,9 @@ const LoginPage: React.FC = () => {
               name="email"
               autoComplete="email"
               autoFocus
-              sx={{ marginBottom: 2 }} // odstęp między polami
+              value={email}
+              onChange={handleEmailChange}
+              sx={{ marginBottom: 2 }}
             />
             <TextField
               margin="normal"
@@ -114,23 +146,26 @@ const LoginPage: React.FC = () => {
               type="password"
               id="password"
               autoComplete="current-password"
-              sx={{ marginBottom: 2 }} // odstęp między polami
+              value={password}
+              onChange={handlePasswordChange}
+              sx={{ marginBottom: 2 }}
             />
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2 }}>
               <Link href="#" variant="body2">
                 Zapomniałeś hasła?
               </Link>
             </Box>
+            {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>} {/* Wyświetlamy komunikat błędu */}
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2, height: '3rem' }} // mt i mb z Material UI, height z html
+              sx={{ mt: 3, mb: 2, height: '3rem' }}
             >
               Zaloguj się
             </Button>
           </Box>
-          <Box sx={{ mt: 5, textAlign: 'center' }}> {/* mt 5 odpowiada mt-10 (około) */}
+          <Box sx={{ mt: 5, textAlign: 'center' }}>
             <Typography variant="body2">
               Nie masz konta?
               <Link href="#" variant="body2" sx={{ ml: 0.5 }}>
