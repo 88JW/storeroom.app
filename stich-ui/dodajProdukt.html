@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dodaj Produkt</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+      :root {
+        --primary-color: #1993e5;
+        --secondary-color: #f0f2f4;
+        --background-color: #f9f9f9;
+        --text-primary: #111418;
+        --text-secondary: #637488;
+        --accent-color: #e0e7ff;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-primary);
+      }
+      .card {
+        @apply bg-white rounded-lg shadow-md p-4 sm:p-6;
+      }
+      .button_primary {
+        @apply bg-[var(--primary-color)] text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none ;
+      }
+      .button_secondary {
+        @apply bg-[var(--secondary-color)] text-[var(--text-primary)] font-bold py-2 px-4 rounded-lg hover:bg-gray-200 focus:outline-none ;
+      }
+      .input {
+        @apply shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none ;
+      }
+      .typography_h1 {
+        @apply text-3xl font-bold text-[var(--text-primary)];
+      }
+      .typography_h2 {
+        @apply text-2xl font-semibold text-[var(--text-primary)];
+      }
+      .typography_body {
+        @apply text-base text-[var(--text-secondary)];
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+    .appearance-none {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[var(--background-color)]">
+<div class="relative flex size-full min-h-screen flex-col justify-between group/design-root overflow-x-hidden">
+<header class="sticky top-0 z-10 bg-[var(--background-color)] shadow-sm">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex h-16 items-center justify-between">
+<button class="flex items-center justify-center p-2 text-[var(--text-primary)]">
+<svg class="h-6 w-6" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 18l-6-6 6-6"></path>
+</svg>
+<span class="sr-only">Wróć</span>
+</button>
+<h1 class="typography_h2 text-xl font-bold">Dodaj produkt</h1>
+<div class="w-8"></div>
+</div>
+</div>
+</header>
+<main class="flex-grow">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<div class="space-y-6">
+<button class="flex w-full items-center justify-center space-x-3 rounded-lg border-2 border-dashed border-[var(--primary-color)] bg-[var(--accent-color)] py-6 text-[var(--primary-color)] transition-colors hover:bg-blue-200">
+<svg class="h-8 w-8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 8V6a2 2 0 0 1 2-2h2"></path>
+<path d="M4 16v2a2 2 0 0 0 2 2h2"></path>
+<path d="M16 4h2a2 2 0 0 1 2 2v2"></path>
+<path d="M16 20h2a2 2 0 0 0 2-2v-2"></path>
+<path d="M7 12h10"></path>
+</svg>
+<span class="text-lg font-semibold">Skanuj kod kreskowy</span>
+</button>
+<div class="relative flex items-center">
+<div class="flex-grow border-t border-gray-300"></div>
+<span class="mx-4 flex-shrink text-sm text-[var(--text-secondary)]">LUB DODAJ RĘCZNIE</span>
+<div class="flex-grow border-t border-gray-300"></div>
+</div>
+<div>
+<label class="typography_body block text-sm font-medium text-[var(--text-secondary)] mb-1" for="product-name">Nazwa produktu</label>
+<input class="input w-full bg-[var(--secondary-color)] border-transparent focus:border-primary-color focus:ring-0 rounded-lg px-4 py-3" id="product-name" placeholder="np. Mleko" type="text"/>
+</div>
+<div class="flex items-end space-x-2">
+<div class="flex-grow">
+<label class="typography_body block text-sm font-medium text-[var(--text-secondary)] mb-1" for="quantity">Ilość</label>
+<input class="input w-full bg-[var(--secondary-color)] border-transparent focus:border-primary-color focus:ring-0 rounded-lg px-4 py-3" id="quantity" placeholder="np. 1" type="number"/>
+</div>
+<div class="w-1/3">
+<label class="typography_body block text-sm font-medium text-[var(--text-secondary)] mb-1" for="unit">Jednostka</label>
+<div class="relative">
+<select class="input w-full bg-[var(--secondary-color)] border-transparent focus:border-primary-color focus:ring-0 rounded-lg px-4 py-3 appearance-none" id="unit">
+<option>szt</option>
+<option>g</option>
+<option>kg</option>
+<option>ml</option>
+<option>l</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+<svg class="fill-current h-4 w-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path></svg>
+</div>
+</div>
+</div>
+</div>
+<div>
+<label class="typography_body block text-sm font-medium text-[var(--text-secondary)] mb-1" for="expiry-date">Data ważności</label>
+<input class="input w-full bg-[var(--secondary-color)] border-transparent focus:border-primary-color focus:ring-0 rounded-lg px-4 py-3 text-[var(--text-secondary)]" id="expiry-date" type="date"/>
+</div>
+<div>
+<label class="typography_body block text-sm font-medium text-[var(--text-secondary)] mb-1" for="category">Kategoria</label>
+<div class="relative">
+<select class="input w-full bg-[var(--secondary-color)] border-transparent focus:border-primary-color focus:ring-0 rounded-lg px-4 py-3 appearance-none" id="category">
+<option>Nabiał</option>
+<option>Mięso</option>
+<option>Warzywa</option>
+<option>Owoce</option>
+<option>Napoje</option>
+<option>Inne</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+<svg class="fill-current h-4 w-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path></svg>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="sticky bottom-0 bg-[var(--background-color)] py-4 px-4 sm:px-6 lg:px-8">
+<button class="button_primary w-full h-14 text-base font-bold tracking-wide">Dodaj produkt</button>
+</footer>
+</div>
+
+</body></html>

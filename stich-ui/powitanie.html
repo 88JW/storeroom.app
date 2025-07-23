@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pl"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;family=Noto+Sans:wght@400;500;700;900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<title>Lodówkomat - Zarządzaj swoją lodówką</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+      :root {
+        --primary-color: #1993e5;
+        --secondary-color: #f0f2f4;
+        --background-color: #f9f9f9;
+        --text-primary: #111418;
+        --text-secondary: #637488;
+        --accent-color: #e0e7ff;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-primary);
+      }
+      .button_primary {
+        @apply bg-[var(--primary-color)] text-white font-bold py-3 px-6 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out;
+      }
+      .typography_h2 {
+        @apply text-3xl font-bold text-[var(--text-primary)] tracking-tight;
+      }
+      .typography_body {
+        @apply text-base text-[var(--text-secondary)] leading-relaxed;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[var(--background-color)]">
+<div class="relative flex size-full min-h-screen flex-col justify-between overflow-hidden">
+<main class="flex-grow flex flex-col justify-center items-center px-6 text-center">
+<div class="max-w-md w-full">
+<img alt="Ilustracja przedstawiająca dobrze zaopatrzoną lodówkę z różnymi produktami spożywczymi." class="w-full h-auto object-contain max-h-[40vh] mb-8" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMdXf00L-_BoLZCxbVQ9KnerB4XAT3cUbm6U-a1MIalk3frrXo-V0eKvlB0bWimIP7be1Ah-QCqpyDwHX23GxLzitB7GLp9KUhYuTUMBGn_roRTd1mPFSjSeMtdHkU9fmSCuizru8w7Rvv2f99aqZALSl4LAkf775PTDPzoZGhN822gz2ioPiJl2tqAtcJZMvFxinlNPFZhPMpA8OykLqvY6dMFtzEAXxMv3eBjcIL2KnvGtu4v1ZlvXOutnHLu8GFCQafrsACHNFe"/>
+<h1 class="typography_h2 mb-4">Lodówkomat</h1>
+<p class="typography_body mb-10">
+            Zarządzaj zawartością swojej lodówki i zamrażarki. Koniec z marnowaniem jedzenia!
+          </p>
+</div>
+</main>
+<footer class="w-full px-6 pb-8 pt-4">
+<button class="button_primary w-full h-14 text-lg">
+<span class="truncate">Rozpocznij</span>
+</button>
+</footer>
+</div>
+
+</body></html>
