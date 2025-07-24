@@ -9,14 +9,29 @@ import {
   Avatar,
   Fab,
   Alert,
-  CircularProgress
+  CircularProgress,
+  BottomNavigation,
+  BottomNavigationAction,
+  Paper,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Menu,
+  MenuItem
 } from '@mui/material';
 import {
   Add,
   Kitchen,
   Home,
   Work,
-  Group
+  Group,
+  List,
+  Settings,
+  MoreVert,
+  Delete
 } from '@mui/icons-material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -134,6 +149,11 @@ const SpizarniaListPage: React.FC = () => {
   const [spiżarnie, setSpiżarnie] = useState<SpizarniaWithMetadata[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [bottomNavValue, setBottomNavValue] = useState(0);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [spizarniaToDelete, setSpizarniaToDelete] = useState<string | null>(null);
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+  const [selectedSpizarniaId, setSelectedSpizarniaId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   // 📱 Pobieranie spiżarni użytkownika
@@ -148,13 +168,6 @@ const SpizarniaListPage: React.FC = () => {
         
         const userSpiżarnie = await SpizarniaService.getUserSpiżarnie(userId);
         setSpiżarnie(userSpiżarnie);
-
-        // 🚀 Auto-redirect jeśli tylko jedna spiżarnia
-        if (userSpiżarnie.length === 1) {
-          setTimeout(() => {
-            navigate(`/lista?spizarnia=${userSpiżarnie[0].id}`);
-          }, 1000);
-        }
 
       } catch (err) {
         console.error('Błąd ładowania spiżarni:', err);
@@ -205,6 +218,55 @@ const SpizarniaListPage: React.FC = () => {
     navigate('/nowa-spizarnia');
   };
 
+  // 📱 Obsługa menu opcji
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, spizarniaId: string) => {
+    event.stopPropagation(); // Nie przechodzi do spiżarni
+    setMenuAnchor(event.currentTarget);
+    setSelectedSpizarniaId(spizarniaId);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchor(null);
+    setSelectedSpizarniaId(null);
+  };
+
+  // 🗑️ Obsługa usuwania spiżarni
+  const handleDeleteClick = () => {
+    if (selectedSpizarniaId) {
+      setSpizarniaToDelete(selectedSpizarniaId);
+      setDeleteDialogOpen(true);
+    }
+    handleMenuClose();
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!spizarniaToDelete) return;
+
+    try {
+      // TODO: Pobrać UID z Firebase Auth
+      const userId = 'Gh2ywl1BIAhib9yxK2XOox0WUBL2';
+      
+      await SpizarniaService.deleteSpizarnia(spizarniaToDelete, userId);
+      
+      // Usuń z lokalnego state
+      setSpiżarnie(prev => prev.filter(s => s.id !== spizarniaToDelete));
+      
+      setDeleteDialogOpen(false);
+      setSpizarniaToDelete(null);
+      
+    } catch (error) {
+      console.error('Błąd usuwania spiżarni:', error);
+      setError('Błąd podczas usuwania spiżarni');
+      setDeleteDialogOpen(false);
+      setSpizarniaToDelete(null);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setSpizarniaToDelete(null);
+  };
+
   if (loading) {
     return (
       <ThemeProvider theme={theme}>
@@ -237,7 +299,7 @@ const SpizarniaListPage: React.FC = () => {
           pt: 3
         }}
       >
-        <Container sx={{ maxWidth: 'sm' }}>
+        <Container sx={{ maxWidth: 'sm', pb: 8 }}>
           <Typography variant="h1" sx={{ mb: 4 }}>
             Twoje spiżarnie
           </Typography>
@@ -290,14 +352,7 @@ const SpizarniaListPage: React.FC = () => {
             </Box>
           ) : (
             <>
-              {/* 🚀 Auto-redirect info dla single spiżarnia */}
-              {spiżarnie.length === 1 && (
-                <Alert severity="info" sx={{ mb: 3 }}>
-                  Przekierowywanie do jedynej spiżarni...
-                </Alert>
-              )}
-
-              {/* 📋 Lista spiżarni */}
+              {/*  Lista spiżarni */}
               <Box sx={{ mb: 4 }}>
                 {spiżarnie.map((spizarnia, index) => (
                   <Card 
@@ -348,16 +403,30 @@ const SpizarniaListPage: React.FC = () => {
                         </Typography>
                       </Box>
 
-                      {/* ➡️ Wskaźnik kliknięcia z animacją */}
-                      <Box sx={{ 
-                        color: 'text.secondary',
-                        fontSize: '1.2rem',
-                        transition: 'transform 0.2s ease',
-                        '.MuiCard-root:hover &': {
-                          transform: 'translateX(4px)',
-                        }
-                      }}>
-                        →
+                      {/* 🔧 Menu opcji dla właścicieli lub wskaźnik dla pozostałych */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {spizarnia.data.role === 'owner' ? (
+                          <IconButton
+                            onClick={(e) => handleMenuOpen(e, spizarnia.id)}
+                            sx={{ 
+                              color: 'text.secondary',
+                              '&:hover': { color: 'primary.main' }
+                            }}
+                          >
+                            <MoreVert />
+                          </IconButton>
+                        ) : (
+                          <Box sx={{ 
+                            color: 'text.secondary',
+                            fontSize: '1.2rem',
+                            transition: 'transform 0.2s ease',
+                            '.MuiCard-root:hover &': {
+                              transform: 'translateX(4px)',
+                            }
+                          }}>
+                            →
+                          </Box>
+                        )}
                       </Box>
                     </CardContent>
                   </Card>
@@ -374,7 +443,7 @@ const SpizarniaListPage: React.FC = () => {
             onClick={handleCreateSpiżarnia}
             sx={{
               position: 'fixed',
-              bottom: { xs: 20, sm: 24 },
+              bottom: { xs: 80, sm: 84 }, // Wyżej nad bottom navigation
               right: { xs: 20, sm: 24 },
               width: { xs: 56, sm: 64 },
               height: { xs: 56, sm: 64 },
@@ -383,6 +452,95 @@ const SpizarniaListPage: React.FC = () => {
             <Add sx={{ fontSize: { xs: '1.5rem', sm: '1.75rem' } }} />
           </Fab>
         )}
+
+        {/* 📱 Menu opcji spiżarni */}
+        <Menu
+          anchorEl={menuAnchor}
+          open={Boolean(menuAnchor)}
+          onClose={handleMenuClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+        >
+          <MenuItem onClick={handleDeleteClick}>
+            <Delete sx={{ mr: 1, color: 'error.main' }} />
+            <Typography color="error.main">Usuń spiżarnię</Typography>
+          </MenuItem>
+        </Menu>
+
+        {/* 🗑️ Dialog potwierdzenia usunięcia */}
+        <Dialog
+          open={deleteDialogOpen}
+          onClose={handleDeleteCancel}
+          aria-labelledby="delete-dialog-title"
+        >
+          <DialogTitle id="delete-dialog-title">
+            Usuń spiżarnię
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Czy na pewno chcesz usunąć spiżarnię <strong>"{spiżarnie.find(s => s.id === spizarniaToDelete)?.metadata.nazwa}"</strong>? 
+              <br /><br />
+              Ta akcja jest nieodwracalna i usunie wszystkie produkty oraz członków.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDeleteCancel} color="primary">
+              Anuluj
+            </Button>
+            <Button 
+              onClick={handleDeleteConfirm} 
+              color="error" 
+              variant="contained"
+              autoFocus
+            >
+              Usuń
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* 📱 Bottom Navigation */}
+        <Paper 
+          sx={{ 
+            position: 'fixed', 
+            bottom: 0, 
+            left: 0, 
+            right: 0,
+            borderTop: '1px solid #e5e7eb'
+          }}
+        >
+          <BottomNavigation
+            value={bottomNavValue}
+            onChange={(_, newValue) => setBottomNavValue(newValue)}
+            sx={{ bgcolor: '#f9f9f9' }}
+          >
+            <BottomNavigationAction 
+              label="Spiżarnie" 
+              icon={<Home />} 
+              sx={{ color: '#1993e5' }}
+            />
+            <BottomNavigationAction 
+              label="Dodaj" 
+              icon={<Add />} 
+              onClick={() => navigate('/dodaj-produkt')}
+            />
+            <BottomNavigationAction 
+              label="Lista" 
+              icon={<List />} 
+              onClick={() => navigate('/lista')}
+            />
+            <BottomNavigationAction 
+              label="Ustawienia" 
+              icon={<Settings />} 
+              onClick={() => navigate('/ustawienia')}
+            />
+          </BottomNavigation>
+        </Paper>
       </Box>
     </ThemeProvider>
   );

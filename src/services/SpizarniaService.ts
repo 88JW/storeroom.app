@@ -175,11 +175,48 @@ export class SpizarniaService {
       if (!członekDoc.exists() || członekDoc.data().role !== 'owner') {
         throw new Error('Tylko właściciel może usunąć spiżarnię');
       }
+
+      // Użyj batch do atomowego usuwania wszystkich dokumentów
+      const batch = writeBatch(db);
+
+      // 1. Usuń spiżarnię z kolekcji użytkownika
+      const userSpizarniaRef = doc(db, 'users', userId, 'spiżarnie', spizarniaId);
+      batch.delete(userSpizarniaRef);
+
+      // 2. Pobierz wszystkich członków i usuń spiżarnię z ich kolekcji
+      const członkowieRef = collection(db, 'spiżarnie', spizarniaId, 'członkowie');
+      const członkowieSnapshot = await getDocs(członkowieRef);
       
-      // TODO: Usunąć wszystkie produkty, członków i metadane
-      // To wymaga funkcji cloud functions dla bezpieczeństwa
+      for (const członekDoc of członkowieSnapshot.docs) {
+        const członekId = członekDoc.id;
+        const memberSpizarniaRef = doc(db, 'users', członekId, 'spiżarnie', spizarniaId);
+        batch.delete(memberSpizarniaRef);
+      }
+
+      // 3. Usuń metadane spiżarni
+      const metadataRef = doc(db, 'spiżarnie', spizarniaId, 'metadata', 'info');
+      batch.delete(metadataRef);
+
+      // 4. Usuń wszystkich członków
+      for (const członekDoc of członkowieSnapshot.docs) {
+        batch.delete(członekDoc.ref);
+      }
+
+      // 5. Pobierz i usuń wszystkie produkty
+      const produktyRef = collection(db, 'spiżarnie', spizarniaId, 'produkty');
+      const produktySnapshot = await getDocs(produktyRef);
       
-      console.log('SpizarniaService: Usunięto spiżarnię');
+      for (const produktDoc of produktySnapshot.docs) {
+        batch.delete(produktDoc.ref);
+      }
+
+      // 6. Usuń główny dokument spiżarni (folder)
+      // Firestore automatycznie usuwa puste kolekcje
+
+      // Wykonaj wszystkie operacje atomowo
+      await batch.commit();
+      
+      console.log('SpizarniaService: Pomyślnie usunięto spiżarnię:', spizarniaId);
       
     } catch (error) {
       console.error('SpizarniaService: Błąd usuwania spiżarni:', error);
