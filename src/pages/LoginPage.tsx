@@ -5,6 +5,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate } from 'react-router-dom'; // Importujemy useNavigate
 import { signInWithEmailAndPassword } from 'firebase/auth'; // Importujemy metodę logowania z Firebase Auth
 import { auth } from '../firebase'; // Importujemy instancję auth z naszej konfiguracji Firebase
+import DatabaseInitializer from '../services/DatabaseInitializer'; // DODANE: Import inicjalizatora bazy
+import { UserService } from '../services/UserService'; // DODANE: Import serwisu użytkowników
 
 // Tymczasowa definicja prostego motywu Material UI
 // Będziemy go rozbudowywać w miarę potrzeby, aby odzwierciedlić kolory ze Stichu
@@ -76,6 +78,7 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null); // Stan do wyświetlania błędów
+  const [initLoading, setInitLoading] = useState(false); // DODANE: Stan ładowania dla inicjalizacji
   const navigate = useNavigate(); // Hook do nawigacji
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,6 +89,26 @@ const LoginPage: React.FC = () => {
     setPassword(event.target.value);
   };
 
+  // DODANE: Funkcja inicjalizacji bazy danych
+  const handleInitializeDatabase = async () => {
+    setInitLoading(true);
+    setError(null);
+    
+    try {
+      await DatabaseInitializer.initializeUserDatabase(
+        'Gh2ywl1BIAhib9yxK2XOox0WUBL2',
+        'test@example.com',
+        'Test User'
+      );
+      alert('✅ Baza danych została pomyślnie zainicjalizowana!');
+    } catch (error) {
+      console.error('Błąd inicjalizacji bazy:', error);
+      setError('Błąd podczas inicjalizacji bazy danych');
+    } finally {
+      setInitLoading(false);
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => { // Zmieniamy na async
     event.preventDefault();
     setError(null); // Czyścimy poprzednie błędy
@@ -94,11 +117,21 @@ const LoginPage: React.FC = () => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       // Logowanie udane
       console.log('Zalogowano pomyślnie!', userCredential.user);
-      // Przekieruj użytkownika na inną stronę, np. /lista
-      navigate('/lista'); // Zakładamy, że masz trasę /lista
-    } catch (error: any) { // Obsługa błędów logowania
+      console.log('🔑 USER ID (UID):', userCredential.user.uid); // DODANE: Wyświetlenie UID
+      console.log('📧 EMAIL:', userCredential.user.email); // DODANE: Wyświetlenie email
+      
+      // 🔗 SYNCHRONIZACJA: Aktualizuj lastLoginAt w Firestore
+      await UserService.updateLastLogin(userCredential.user.uid);
+      
+      // Przekieruj użytkownika na stronę powitalną (tymczasowo)
+      navigate('/welcome'); // Zmienione z /lista na /welcome
+    } catch (error: Error | unknown) { // Obsługa błędów logowania
       console.error('Błąd logowania:', error);
-      setError(error.message); // Ustaw komunikat błędu w stanie
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Wystąpił nieoczekiwany błąd podczas logowania');
+      }
     }
   };
 
@@ -163,6 +196,17 @@ const LoginPage: React.FC = () => {
               sx={{ mt: 3, mb: 2, height: '3rem' }}
             >
               Zaloguj się
+            </Button>
+            
+            {/* DODANE: Przycisk inicjalizacji bazy danych */}
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={handleInitializeDatabase}
+              disabled={initLoading}
+              sx={{ mb: 2, height: '3rem' }}
+            >
+              {initLoading ? 'Tworzenie bazy...' : '🏗️ Inicjalizuj bazę danych'}
             </Button>
           </Box>
           <Box sx={{ mt: 5, textAlign: 'center' }}>

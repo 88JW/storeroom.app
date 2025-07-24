@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 
 import LoginPage from './pages/LoginPage'; // Importujemy komponent strony logowania
 import WelcomePageNew from './pages/WelcomePageNew'; // Importujemy nowy komponent strony powitalnej
-import ListPage from './pages/ListPage'; // Importujemy komponent strony listy produktów
+import ProductListPage from './pages/ProductListPage'; // Importujemy komponent listy produktów
 // import WelcomePage from './pages/WelcomePage'; // Stary komponent strony powitalnej - można usunąć później
 
 createRoot(document.getElementById('root')!).render(
@@ -18,8 +18,10 @@ createRoot(document.getElementById('root')!).render(
         {/* Trasa dla strony logowania */}
         <Route path="/logowanie" element={<LoginPage />} />
 
-        {/* Trasa dla strony listy */}
-        <Route path="/lista" element={<ListPage />} /> {/* Używamy komponentu ListPage */}
+        {/* Trasa dla listy produktów */}
+        <Route path="/lista" element={<ProductListPage />} />
+
+        {/* TODO: Dodać nową stronę listy spiżarni */}
 
         {/* Przekierowanie ze ścieżki głównej na stronę logowania (jak ustaliliśmy tymczasowo) */}
         <Route path="/" element={<Navigate to="/logowanie" replace />} />
