@@ -68,6 +68,11 @@ const theme = createTheme({
           borderRadius: '0.5rem',
           boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
           marginBottom: '0.75rem',
+          // 📱 Mobile-first design
+          '@media (max-width: 600px)': {
+            margin: '0 0 0.75rem 0',
+            borderRadius: '0.75rem',
+          },
         },
       },
     },
