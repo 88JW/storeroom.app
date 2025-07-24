@@ -163,13 +163,77 @@ storeroom-app-b782d
 
 ---
 
-## 🚀 **Plan na następną sesję:**
+## � **Refaktoryzacja architektury** ✅
+
+### 9. **Analiza problemów z wielkością plików** ✅
+- Zidentyfikowano problem: `SpizarniaListPage.tsx` miał **550 linii**
+- Wykryto duplikację kodu: motywy, komponenty UI powtarzały się
+- Użytkownik zgłosił: *"pliki sa bardzo duże i widzę że powtarzają się elementy...trzeba by to podzielić jakoś"*
+
+### 10. **Utworzenie struktury komponentów** ✅
+- Stworzono folder `src/components/`:
+  ```
+  src/components/
+  ├── common/          # Komponenty wspólne
+  ├── spizarnia/       # Komponenty specyficzne dla spiżarni
+  └── theme/           # Motywy i style
+  ```
+
+### 11. **Wydzielenie wspólnego motywu** ✅
+- **Plik:** `src/theme/appTheme.ts`
+- **Cel:** Eliminacja duplikacji motywów Material-UI
+- **Zawiera:**
+  - Paleta kolorów (primary: #1993e5)
+  - Typografia (Plus Jakarta Sans)
+  - Komponenty override (Card, Button, Fab)
+  - Animacje i gradienty
+
+### 12. **Komponenty wspólne** ✅
+- **`AppBottomNavigation.tsx`** - Reużywalna nawigacja dolna
+  - Auto-detekcja aktywnej strony
+  - Nawigacja do wszystkich sekcji
+  - Consistent styling
+  
+- **`LoadingState.tsx`** - Eleganckie stany ładowania
+  - Typ 'spinner' - CircularProgress z komunikatem
+  - Typ 'cards' - Skeleton loading dla list
+  - Typ 'skeleton' - Podstawowy skeleton text
+
+### 13. **Komponenty spiżarni** ✅
+- **`SpizarniaCard.tsx`** - Zaawansowana karta spiżarni
+  - Pełne menu kontekstowe (Edytuj, Udostępnij, Usuń)
+  - Dialog potwierdzenia usunięcia
+  - Hover effects i animacje
+  - Role-based permissions (menu tylko dla owner)
+  - Props interface dla reużywalności
+
+### 14. **Refaktoryzacja SpizarniaListPage.tsx** ✅
+- **Przed:** 550 linii kodu z duplikacją
+- **Po:** 200 linii kodu z komponentami
+- **Redukcja:** 63% mniej kodu!
+- **Korzyści:**
+  - Usunieto duplikację motywów
+  - Wydzielono logikę UI do komponentów
+  - Lepsze zarządzanie stanem
+  - Czytelniejszy główny plik
+  - Reużywalne komponenty
+
+### 15. **Eliminacja problemów TypeScript** ✅
+- Usunięto nieużywane importy i funkcje
+- Poprawiono mapowanie bez unused variables
+- Wszystkie błędy kompilacji rozwiązane
+- Clean code bez warningów
+
+---
+
+## �🚀 **Plan na następną sesję:**
 
 ### **Priorytet 1: Funkcjonalność podstawowa**
-1. **Naprawienie błędów TypeScript** w DatabaseInitializer
-2. **Strona wyboru spiżarni** (lista wszystkich spiżarni użytkownika)
-3. **Automatyczna inicjalizacja** przy pierwszym logowaniu
-4. **Dodawanie nowych produktów** (formularz)
+1. ~~**Naprawienie błędów TypeScript** w DatabaseInitializer~~ ✅
+2. **Refaktoryzacja ProductListPage.tsx** (podobnie jak SpizarniaListPage)
+3. **Strona wyboru spiżarni** (lista wszystkich spiżarni użytkownika)  
+4. **Automatyczna inicjalizacja** przy pierwszym logowaniu
+5. **Dodawanie nowych produktów** (formularz)
 
 ### **Priorytet 2: UX/UI**
 5. **Skanowanie kodów kreskowych** (wykorzystanie `dodajProdukt.html`)
@@ -187,11 +251,12 @@ storeroom-app-b782d
 
 ## 📊 **Metryki sesji:**
 
-- **Czas trwania:** ~3 godziny
-- **Linii kodu:** ~1000+ (nowy kod)
-- **Plików stworzonych:** 8
-- **Plików zmodyfikowanych:** 3
+- **Czas trwania:** ~4.5 godziny
+- **Linii kodu:** ~1200+ (nowy kod)
+- **Plików stworzonych:** 12 (+4 komponenty)
+- **Plików zmodyfikowanych:** 4 (+1 refaktoryzacja)
 - **Plików usuniętych:** 1
+- **Redukcja kodu:** 350 linii (-63% w SpizarniaListPage)
 
 ---
 
@@ -202,6 +267,8 @@ storeroom-app-b782d
 3. **Service layer:** Separacja logiki biznesowej od UI
 4. **Material-UI:** Dla spójności i responsywności
 5. **Mobile-first:** Design zoptymalizowany pod urządzenia mobilne
+6. **Component architecture:** Podział na małe, reużywalne komponenty
+7. **Theme centralization:** Jeden wspólny motyw eliminujący duplikację
 
 ---
 
@@ -231,7 +298,11 @@ storeroom-app-b782d
 ✅ **GOTOWE:** Działająca aplikacja z listą produktów  
 ✅ **GOTOWE:** Pełna architektura bazy danych  
 ✅ **GOTOWE:** System serwisów i typów  
+✅ **GOTOWE:** Refaktoryzacja SpizarniaListPage (-63% kodu)  
+✅ **GOTOWE:** Komponenty reużywalne (4 nowe komponenty)  
+✅ **GOTOWE:** Wspólny motyw eliminujący duplikację  
 🔄 **W TRAKCIE:** Inicjalizacja bazy (działa, ale ma błędy TS)  
+⏳ **NASTĘPNE:** Refaktoryzacja ProductListPage.tsx  
 ⏳ **NASTĘPNE:** Wybór spiżarni i dodawanie produktów  
 
 **Aplikacja dostępna na:** http://localhost:5174/lista
