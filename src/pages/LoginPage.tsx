@@ -123,8 +123,8 @@ const LoginPage: React.FC = () => {
       // 🔗 SYNCHRONIZACJA: Aktualizuj lastLoginAt w Firestore
       await UserService.updateLastLogin(userCredential.user.uid);
       
-      // Przekieruj użytkownika na stronę powitalną (tymczasowo)
-      navigate('/welcome'); // Zmienione z /lista na /welcome
+      // Przekieruj użytkownika na listę spiżarni
+      navigate('/spiżarnie');
     } catch (error: Error | unknown) { // Obsługa błędów logowania
       console.error('Błąd logowania:', error);
       if (error instanceof Error) {

@@ -23,10 +23,11 @@ import {
   Home,
   List,
   Settings,
-  Kitchen
+  Kitchen,
+  ArrowBack
 } from '@mui/icons-material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ProduktService } from '../services/ProduktService';
 import { SpizarniaService } from '../services/SpizarniaService';
 import type { Produkt, SpizarniaMetadata } from '../types';
@@ -118,28 +119,45 @@ const ProductListPage: React.FC = () => {
   const [bottomNavValue, setBottomNavValue] = useState(2); // Lista jest aktywna
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  // 🔗 Pobieranie produktów z pierwszej dostępnej spiżarni
+  // 🔗 Pobieranie produktów z wybranej spiżarni
   useEffect(() => {
-    const loadProductsFromFirstSpizarnia = async () => {
+    const loadProductsFromSpizarnia = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Pobierz spiżarnie użytkownika (na razie na sztywno UID)
-        const userSpizarnie = await SpizarniaService.getUserSpiżarnie('Gh2ywl1BIAhib9yxK2XOox0WUBL2');
+        // Pobierz ID spiżarni z URL parametrów
+        const spizarniaId = searchParams.get('spizarnia');
         
-        if (userSpizarnie.length === 0) {
-          setError('Nie znaleziono żadnych spiżarni. Kliknij przycisk inicjalizacji bazy.');
+        if (!spizarniaId) {
+          // Jeśli brak ID, pobierz pierwszą dostępną spiżarnię
+          const userSpizarnie = await SpizarniaService.getUserSpiżarnie('Gh2ywl1BIAhib9yxK2XOox0WUBL2');
+          
+          if (userSpizarnie.length === 0) {
+            setError('Nie znaleziono żadnych spiżarni. Kliknij przycisk inicjalizacji bazy.');
+            return;
+          }
+
+          // Przekieruj na pierwszą spiżarnię
+          navigate(`/lista?spizarnia=${userSpizarnie[0].id}`);
           return;
         }
 
-        // Weź pierwszą spiżarnię
-        const firstSpizarnia = userSpizarnie[0];
-        setActiveSpizarnia(firstSpizarnia.metadata);
+        // Pobierz metadane spiżarni poprzez getUserSpiżarnie
+        const userSpizarnie = await SpizarniaService.getUserSpiżarnie('Gh2ywl1BIAhib9yxK2XOox0WUBL2');
+        const currentSpizarnia = userSpizarnie.find(s => s.id === spizarniaId);
+        
+        if (!currentSpizarnia) {
+          setError('Nie znaleziono spiżarni lub brak dostępu');
+          return;
+        }
+        
+        setActiveSpizarnia(currentSpizarnia.metadata);
 
         // Pobierz produkty z tej spiżarni
-        const produktyData = await ProduktService.getProdukty(firstSpizarnia.id, 'Gh2ywl1BIAhib9yxK2XOox0WUBL2');
+        const produktyData = await ProduktService.getProdukty(spizarniaId, 'Gh2ywl1BIAhib9yxK2XOox0WUBL2');
         setProdukty(produktyData);
         setFilteredProdukty(produktyData);
 
@@ -151,8 +169,8 @@ const ProductListPage: React.FC = () => {
       }
     };
 
-    loadProductsFromFirstSpizarnia();
-  }, []);
+    loadProductsFromSpizarnia();
+  }, [searchParams, navigate]);
 
   // 🔍 Filtrowanie produktów
   useEffect(() => {
@@ -279,7 +297,12 @@ const ProductListPage: React.FC = () => {
           }}
         >
           <Toolbar sx={{ justifyContent: 'space-between' }}>
-            <Box sx={{ width: 40 }} />
+            <IconButton 
+              onClick={() => navigate('/spiżarnie')}
+              sx={{ color: '#1993e5' }}
+            >
+              <ArrowBack />
+            </IconButton>
             <Typography variant="h1" sx={{ color: '#111418' }}>
               {activeSpizarnia?.nazwa || 'Lista'}
             </Typography>
@@ -383,9 +406,9 @@ const ProductListPage: React.FC = () => {
             sx={{ bgcolor: '#f9f9f9' }}
           >
             <BottomNavigationAction 
-              label="Strona główna" 
+              label="Spiżarnie" 
               icon={<Home />} 
-              onClick={() => navigate('/welcome')}
+              onClick={() => navigate('/spiżarnie')}
             />
             <BottomNavigationAction 
               label="Dodaj" 
