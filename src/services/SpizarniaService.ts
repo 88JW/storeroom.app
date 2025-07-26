@@ -5,23 +5,16 @@ import {
   doc,
   getDocs,
   getDoc,
-  addDoc,
   updateDoc,
-  deleteDoc,
-  query,
-  where,
-  orderBy,
   serverTimestamp,
   Timestamp,
   writeBatch
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { 
+import type { 
   SpizarniaMetadata, 
   SpizarniaCzłonek, 
-  UserSpizarnia, 
-  CzłonekUprawnienia,
-  SpiżarniaRole 
+  UserSpizarnia
 } from '../types';
 
 export class SpizarniaService {
@@ -285,7 +278,7 @@ export class SpizarniaService {
   }
   
   // 📊 Pobieranie statystyk spiżarni
-  static async getSpizarniaStats(spizarniaId: string) {
+  static async getSpizarniaStats() {
     try {
       // TODO: Implementacja statystyk
       // - liczba produktów

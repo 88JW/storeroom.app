@@ -66,7 +66,7 @@ export interface Produkt {
   notatki?: string;
   cena?: number;
   sklep?: string;
-  status: 'dostępny' | 'wykorzystany' | 'przeterminowany';
+  status: ProduktStatus;
 }
 
 // 📩 Zaproszenie
@@ -178,7 +178,7 @@ export const ROLE = {
 
 // 🛠️ Pomocnicze funkcje typu
 export type SpiżarniaRole = keyof typeof ROLE;
-export type ProduktStatus = keyof typeof STATUSY_PRODUKTU;
+export type ProduktStatus = 'dostępny' | 'wykorzystany' | 'przeterminowany';
 export type Lokalizacja = keyof typeof LOKALIZACJE;
 export type Jednostka = typeof JEDNOSTKI[number]['value'];
 

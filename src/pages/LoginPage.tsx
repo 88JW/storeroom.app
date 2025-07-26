@@ -24,6 +24,19 @@ const LoginPage: React.FC = () => {
       console.log('🔑 USER ID (UID):', userCredential.user.uid);
       console.log('📧 EMAIL:', userCredential.user.email);
       
+      // Sprawdź czy użytkownik ma zainicjalizowaną bazę
+      const isInitialized = await DatabaseInitializer.isDatabaseInitialized(userCredential.user.uid);
+      
+      if (!isInitialized) {
+        console.log('🔄 Inicjalizacja bazy danych dla nowego użytkownika...');
+        await DatabaseInitializer.initializeUserDatabase(
+          userCredential.user.uid,
+          userCredential.user.email || 'user@example.com',
+          userCredential.user.displayName || 'Użytkownik'
+        );
+        console.log('✅ Baza danych zainicjalizowana automatycznie');
+      }
+      
       await UserService.updateLastLogin(userCredential.user.uid);
       navigate('/spiżarnie');
     } catch (error: Error | unknown) {
@@ -43,10 +56,15 @@ const LoginPage: React.FC = () => {
     setError(null);
     
     try {
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error('Brak zalogowanego użytkownika');
+      }
+      
       await DatabaseInitializer.initializeUserDatabase(
-        'Gh2ywl1BIAhib9yxK2XOox0WUBL2',
-        'test@example.com',
-        'Test User'
+        user.uid,
+        user.email || 'user@example.com',
+        user.displayName || 'Użytkownik'
       );
       alert('✅ Baza danych została pomyślnie zainicjalizowana!');
     } catch (error) {

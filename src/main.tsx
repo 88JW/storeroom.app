@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import WelcomePageNew from './pages/WelcomePageNew';
 import ProductListPage from './pages/ProductListPage';
 import SpizarniaListPage from './pages/SpizarniaListPage';
+import AddProductPage from './pages/AddProductPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -33,6 +34,14 @@ createRoot(document.getElementById('root')!).render(
             element={
               <ProtectedRoute>
                 <ProductListPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/dodaj-produkt" 
+            element={
+              <ProtectedRoute>
+                <AddProductPage />
               </ProtectedRoute>
             } 
           />

@@ -7,16 +7,14 @@ import {
   addDoc,
   serverTimestamp,
   writeBatch,
-  Timestamp,
-  FieldValue
+  Timestamp
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { 
   SpizarniaMetadata, 
   SpizarniaCzłonek, 
   UserSpizarnia, 
-  UserProfile,
-  Produkt 
+  UserProfile
 } from '../types';
 
 export class DatabaseInitializer {
@@ -135,7 +133,17 @@ export class DatabaseInitializer {
       const produktyRef = collection(db, 'spiżarnie', spizarniaId, 'produkty');
       
       // Przykładowe produkty
-      const sampleProdukty = [
+      const sampleProdukty: Array<{
+        nazwa: string;
+        kategoria: string;
+        podkategoria: string;
+        ilość: number;
+        jednostka: 'szt' | 'kg' | 'l' | 'g' | 'ml';
+        dataWażności: Date;
+        lokalizacja: 'lodówka' | 'zamrażarka' | 'szafka';
+        status: 'dostępny' | 'wykorzystany' | 'przeterminowany';
+        notatki: string;
+      }> = [
         {
           nazwa: 'Mleko',
           kategoria: 'Nabiał',
@@ -185,7 +193,7 @@ export class DatabaseInitializer {
           kategoria: 'Nabiał',
           podkategoria: 'Masło',
           ilość: 1,
-          jednostka: 'opak',
+          jednostka: 'szt',
           dataWażności: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Za 30 dni
           lokalizacja: 'lodówka',
           status: 'dostępny',
@@ -195,12 +203,17 @@ export class DatabaseInitializer {
       
       // Dodaj wszystkie produkty
       for (const produktData of sampleProdukty) {
-        const produkt: Omit<Produkt, 'id'> = {
+        const produkt: any = {
           ...produktData,
-          dataDodania: serverTimestamp() as any,
-          dataModyfikacji: serverTimestamp() as any,
+          dataDodania: serverTimestamp(),
+          dataModyfikacji: serverTimestamp(),
           dodanePrzez: userId
         };
+        
+        // Dodaj dataWażności tylko jeśli istnieje
+        if (produktData.dataWażności) {
+          produkt.dataWażności = Timestamp.fromDate(produktData.dataWażności);
+        }
         
         await addDoc(produktyRef, produkt);
       }
@@ -228,7 +241,7 @@ export class DatabaseInitializer {
   }
   
   // 🧹 Czyszczenie bazy dla użytkownika (do testów)
-  static async clearUserDatabase(userId: string): Promise<void> {
+  static async clearUserDatabase(): Promise<void> {
     try {
       console.log('🧹 Czyszczenie bazy danych użytkownika...');
       

@@ -13,7 +13,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
-  User
+  type User
 } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import type { UserProfile } from '../types';
@@ -192,7 +192,7 @@ export class UserService {
   }
   
   // 📊 Pobieranie podstawowych statystyk użytkownika
-  static async getUserStats(userId: string) {
+  static async getUserStats() {
     try {
       // TODO: Implementacja statystyk użytkownika
       // - liczba spiżarni
