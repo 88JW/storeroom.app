@@ -8,9 +8,10 @@ import {
   Add,
   Home,
   List,
-  Settings
+  Logout
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 interface AppBottomNavigationProps {
   value?: number;
@@ -23,6 +24,16 @@ export const AppBottomNavigation: React.FC<AppBottomNavigationProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/welcome');
+    } catch (error) {
+      console.error('Błąd wylogowania:', error);
+    }
+  };
 
   // Auto-detect current page based on location
   const getCurrentValue = () => {
@@ -70,9 +81,9 @@ export const AppBottomNavigation: React.FC<AppBottomNavigationProps> = ({
           }}
         />
         <BottomNavigationAction 
-          label="Ustawienia" 
-          icon={<Settings />} 
-          onClick={() => navigate('/ustawienia')}
+          label="Wyloguj" 
+          icon={<Logout />} 
+          onClick={handleLogout}
         />
       </BottomNavigation>
     </Paper>

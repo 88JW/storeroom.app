@@ -16,6 +16,7 @@ import { LoadingState } from '../components/common/LoadingState';
 import { ProductCard } from '../components/spizarnia/ProductCard';
 import { SearchBar } from '../components/common/SearchBar';
 import { PageHeader } from '../components/common/PageHeader';
+import { useAuth } from '../hooks/useAuth';
 
 const ProductListPage: React.FC = () => {
   const [produkty, setProdukty] = useState<Produkt[]>([]);
@@ -28,6 +29,7 @@ const ProductListPage: React.FC = () => {
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { user } = useAuth();
 
   // 🔗 Pobieranie produktów z wybranej spiżarni
   useEffect(() => {
@@ -41,7 +43,11 @@ const ProductListPage: React.FC = () => {
         
         if (!spizarniaId) {
           // Jeśli brak ID, pobierz pierwszą dostępną spiżarnię
-          const userSpizarnie = await SpizarniaService.getUserSpiżarnie('Gh2ywl1BIAhib9yxK2XOox0WUBL2');
+          if (!user?.uid) {
+            throw new Error('Użytkownik nie jest zalogowany');
+          }
+          
+          const userSpizarnie = await SpizarniaService.getUserSpiżarnie(user.uid);
           
           if (userSpizarnie.length === 0) {
             setError('Nie znaleziono żadnych spiżarni. Kliknij przycisk inicjalizacji bazy.');
@@ -54,7 +60,11 @@ const ProductListPage: React.FC = () => {
         }
 
         // Pobierz metadane spiżarni poprzez getUserSpiżarnie
-        const userSpizarnie = await SpizarniaService.getUserSpiżarnie('Gh2ywl1BIAhib9yxK2XOox0WUBL2');
+        if (!user?.uid) {
+          throw new Error('Użytkownik nie jest zalogowany');
+        }
+        
+        const userSpizarnie = await SpizarniaService.getUserSpiżarnie(user.uid);
         const currentSpizarnia = userSpizarnie.find(s => s.id === spizarniaId);
         
         if (!currentSpizarnia) {
@@ -65,7 +75,7 @@ const ProductListPage: React.FC = () => {
         setActiveSpizarnia(currentSpizarnia.metadata);
 
         // Pobierz produkty z tej spiżarni
-        const produktyData = await ProduktService.getProdukty(spizarniaId, 'Gh2ywl1BIAhib9yxK2XOox0WUBL2');
+        const produktyData = await ProduktService.getProdukty(spizarniaId, user.uid);
         setProdukty(produktyData);
         setFilteredProdukty(produktyData);
 
@@ -78,7 +88,7 @@ const ProductListPage: React.FC = () => {
     };
 
     loadProductsFromSpizarnia();
-  }, [searchParams, navigate]);
+  }, [searchParams, navigate, user?.uid]);
 
   // 🔍 Filtrowanie produktów
   useEffect(() => {

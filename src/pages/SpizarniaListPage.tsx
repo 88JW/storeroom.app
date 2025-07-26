@@ -19,6 +19,7 @@ import { appTheme } from '../theme/appTheme';
 import { AppBottomNavigation } from '../components/common/AppBottomNavigation';
 import { SpizarniaCard } from '../components/spizarnia/SpizarniaCard';
 import { LoadingState } from '../components/common/LoadingState';
+import { useAuth } from '../hooks/useAuth';
 
 type SpizarniaWithMetadata = {
   id: string;
@@ -31,6 +32,7 @@ const SpizarniaListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // 📱 Pobieranie spiżarni użytkownika
   useEffect(() => {
@@ -39,10 +41,11 @@ const SpizarniaListPage: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // TODO: Pobrać UID z Firebase Auth
-        const userId = 'Gh2ywl1BIAhib9yxK2XOox0WUBL2'; // Tymczasowo hardcoded
+        if (!user?.uid) {
+          throw new Error('Użytkownik nie jest zalogowany');
+        }
         
-        const userSpiżarnie = await SpizarniaService.getUserSpiżarnie(userId);
+        const userSpiżarnie = await SpizarniaService.getUserSpiżarnie(user.uid);
         setSpiżarnie(userSpiżarnie);
 
       } catch (err) {
@@ -54,7 +57,7 @@ const SpizarniaListPage: React.FC = () => {
     };
 
     loadUserSpiżarnie();
-  }, [navigate]);
+  }, [user?.uid, navigate]);
 
   //  Tworzenie nowej spiżarni
   const handleCreateSpiżarnia = () => {
@@ -64,10 +67,11 @@ const SpizarniaListPage: React.FC = () => {
   // �️ Obsługa usuwania spiżarni
   const handleDeleteSpizarnia = async (spizarniaId: string) => {
     try {
-      // TODO: Pobrać UID z Firebase Auth
-      const userId = 'Gh2ywl1BIAhib9yxK2XOox0WUBL2';
+      if (!user?.uid) {
+        throw new Error('Użytkownik nie jest zalogowany');
+      }
       
-      await SpizarniaService.deleteSpizarnia(spizarniaId, userId);
+      await SpizarniaService.deleteSpizarnia(spizarniaId, user.uid);
       
       // Usuń z lokalnego state
       setSpiżarnie(prev => prev.filter(s => s.id !== spizarniaId));
