@@ -20,7 +20,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   onSearchChange,
   selectedFilter,
   onFilterChange,
-  filters = ['wszystko', 'lodówka', 'zamrażarka']
+  filters = ['wszystko', 'lodówka', 'zamrażarka', 'szafka']
 }) => {
   return (
     <Box sx={{ px: 2, pb: 2 }}>
