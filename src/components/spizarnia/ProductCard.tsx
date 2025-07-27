@@ -4,19 +4,22 @@ import {
   CardContent,
   Avatar,
   Typography,
-  Box
+  Box,
+  IconButton
 } from '@mui/material';
-import { Kitchen } from '@mui/icons-material';
+import { Kitchen, Edit } from '@mui/icons-material';
 import type { Produkt } from '../../types';
 
 interface ProductCardProps {
   produkt: Produkt;
   onClick?: (produkt: Produkt) => void;
+  onEdit?: (produkt: Produkt) => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ 
   produkt, 
-  onClick 
+  onClick,
+  onEdit 
 }) => {
   // 📅 Funkcja do obliczania dni do wygaśnięcia
   const getDaysUntilExpiry = (dataWażności?: Date | { toDate: () => Date }): { 
@@ -42,6 +45,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const handleClick = () => {
     if (onClick) {
       onClick(produkt);
+    }
+  };
+
+  const handleEdit = (event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent card click
+    if (onEdit) {
+      onEdit(produkt);
     }
   };
 
@@ -131,6 +141,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             {expiryInfo.text}
           </Typography>
         </Box>
+
+        {/* 🖊️ Edit Button */}
+        {onEdit && (
+          <IconButton
+            onClick={handleEdit}
+            size="small"
+            sx={{ 
+              ml: 1,
+              color: '#1993e5',
+              '&:hover': {
+                bgcolor: 'rgba(25, 147, 229, 0.1)'
+              }
+            }}
+          >
+            <Edit fontSize="small" />
+          </IconButton>
+        )}
       </CardContent>
     </Card>
   );

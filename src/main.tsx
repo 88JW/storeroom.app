@@ -10,6 +10,7 @@ import WelcomePageNew from './pages/WelcomePageNew';
 import ProductListPage from './pages/ProductListPage';
 import SpizarniaListPage from './pages/SpizarniaListPage';
 import AddProductPage from './pages/AddProductPage';
+import EditProductPage from './pages/EditProductPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -42,6 +43,14 @@ createRoot(document.getElementById('root')!).render(
             element={
               <ProtectedRoute>
                 <AddProductPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/edytuj-produkt" 
+            element={
+              <ProtectedRoute>
+                <EditProductPage />
               </ProtectedRoute>
             } 
           />

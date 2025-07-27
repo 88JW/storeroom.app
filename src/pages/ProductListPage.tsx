@@ -118,12 +118,24 @@ const ProductListPage: React.FC = () => {
   };
 
   const handleAddProduct = () => {
-    navigate('/dodaj-produkt');
+    const spizarniaId = searchParams.get('spizarnia');
+    if (spizarniaId) {
+      navigate(`/dodaj-produkt?spizarnia=${spizarniaId}`);
+    } else {
+      navigate('/dodaj-produkt');
+    }
   };
 
   const handleProductClick = (produkt: Produkt) => {
     // TODO: Navigate to product details
     console.log('Clicked product:', produkt);
+  };
+
+  const handleProductEdit = (produkt: Produkt) => {
+    const spizarniaId = searchParams.get('spizarnia');
+    if (spizarniaId) {
+      navigate(`/edytuj-produkt?spizarnia=${spizarniaId}&id=${produkt.id}`);
+    }
   };
 
   if (loading) {
@@ -194,6 +206,7 @@ const ProductListPage: React.FC = () => {
                   key={produkt.id} 
                   produkt={produkt}
                   onClick={handleProductClick}
+                  onEdit={handleProductEdit}
                 />
               ))}
             </Box>
