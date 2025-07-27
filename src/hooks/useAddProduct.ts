@@ -15,6 +15,7 @@ interface ProductFormData {
   dataWażności: string;
   lokalizacja: string;
   opis: string;
+  marka?: string;
 }
 
 const initialFormData: ProductFormData = {
@@ -24,7 +25,8 @@ const initialFormData: ProductFormData = {
   jednostka: 'szt' as const,
   dataWażności: '',
   lokalizacja: '', // Zostanie ustawione dynamicznie
-  opis: ''
+  opis: '',
+  marka: ''
 };
 
 export const useAddProduct = () => {
@@ -95,6 +97,20 @@ export const useAddProduct = () => {
     }));
   };
 
+  // 📱 Obsługa danych z kodu kreskowego
+  const handleBarcodeData = (data: Partial<ProductFormData>) => {
+    console.log('useAddProduct: Otrzymane dane z kodu kreskowego:', JSON.stringify(data, null, 2));
+    setFormData(prev => {
+      const newFormData = {
+        ...prev,
+        ...data
+      };
+      console.log('useAddProduct: Stare dane formularza:', JSON.stringify(prev, null, 2));
+      console.log('useAddProduct: Nowe dane formularza:', JSON.stringify(newFormData, null, 2));
+      return newFormData;
+    });
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     
@@ -124,6 +140,7 @@ export const useAddProduct = () => {
         status: ProduktStatus;
         dataWażności?: Timestamp;
         notatki?: string;
+        marka?: string;
       } = {
         nazwa: formData.nazwa.trim(),
         kategoria: formData.kategoria,
@@ -140,6 +157,10 @@ export const useAddProduct = () => {
       
       if (formData.opis.trim()) {
         nowyProdukt.notatki = formData.opis.trim();
+      }
+
+      if (formData.marka?.trim()) {
+        nowyProdukt.marka = formData.marka.trim();
       }
 
       // Dodaj produkt do Firestore
@@ -188,6 +209,7 @@ export const useAddProduct = () => {
     spizarniaNazwa,
     isFormValid,
     handleInputChange,
+    handleBarcodeData,
     handleSubmit,
     handleScanBarcode,
     handleGoBack

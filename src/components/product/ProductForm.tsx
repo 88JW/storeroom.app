@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   TextField,
   Select,
@@ -8,10 +8,14 @@ import {
   Box,
   Grid,
   Alert,
-  Typography
+  Typography,
+  IconButton
 } from '@mui/material';
+import { QrCodeScanner } from '@mui/icons-material';
 import { KATEGORIE, JEDNOSTKI } from '../../types';
 import { useSpizarniaLokalizacje } from '../../hooks/useSpizarniaLokalizacje';
+import { BarcodeScanner } from '../barcode/BarcodeScanner';
+import { BarcodeService } from '../../services/BarcodeService';
 
 interface ProductFormData {
   nazwa: string;
@@ -21,12 +25,14 @@ interface ProductFormData {
   dataWażności: string;
   lokalizacja: string;
   opis: string;
+  marka?: string;
 }
 
 interface ProductFormProps {
   formData: ProductFormData;
   error: string | null;
   onChange: (field: keyof ProductFormData) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { value: string | number } }) => void;
+  onBarcodeData?: (data: Partial<ProductFormData>) => void;
   spizarniaNazwa?: string;
   spizarniaId?: string; // Dodane dla lokalizacji
 }
@@ -35,24 +41,82 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   formData,
   error,
   onChange,
+  onBarcodeData,
   spizarniaNazwa,
   spizarniaId
 }) => {
   // 📍 Pobierz lokalizacje z spiżarni
   const { lokalizacje, loading: lokalizacjeLoading } = useSpizarniaLokalizacje(spizarniaId || null);
+  
+  // 📱 Stan skanera kodów kreskowych
+  const [scannerOpen, setScannerOpen] = useState(false);
+
+  // 📱 Obsługa danych ze skanera
+  const handleBarcodeData = async (barcode: string) => {
+    try {
+      console.log('ProductForm: Otrzymano kod kreskowy:', barcode);
+      
+      // Pobierz dane produktu z nowego systemu wieloźródłowego
+      console.log('ProductForm: Pobieranie danych z systemu wieloźródłowego...');
+      const barcodeService = new BarcodeService();
+      const productData = await barcodeService.getProductData(barcode);
+      console.log('ProductForm: Otrzymane dane produktu:', productData);
+      
+      if (productData && productData.znaleziony && onBarcodeData) {
+        // Mapuj dane na format formularza
+        const formData: Partial<ProductFormData> = {
+          nazwa: productData.nazwa,
+          kategoria: productData.kategoria,
+          marka: productData.marka
+        };
+        
+        console.log('ProductForm: Wysyłanie rzeczywistych danych do rodzica:', formData);
+        onBarcodeData(formData);
+      } else {
+        console.log('ProductForm: Brak danych produktu lub produkt nie znaleziony');
+        // Jeśli nie znaleziono produktu, ustaw tylko kod jako nazwę z informacją
+        if (onBarcodeData) {
+          onBarcodeData({ 
+            nazwa: `Nieznany produkt (${barcode})`,
+            kategoria: 'INNE'
+          });
+        }
+      }
+    } catch (error) {
+      console.error('ProductForm: Błąd podczas pobierania danych produktu:', error);
+      // W przypadku błędu, ustaw kod jako nazwę
+      if (onBarcodeData) {
+        onBarcodeData({ nazwa: `Produkt ${barcode}` });
+      }
+    }
+    
+    setScannerOpen(false);
+  };
 
   return (
     <Box sx={{ space: 3 }}>
-      {/* Nazwa produktu */}
-      <TextField
-        fullWidth
-        label="Nazwa produktu"
-        placeholder="np. Mleko"
-        value={formData.nazwa}
-        onChange={onChange('nazwa')}
-        required
-        sx={{ mb: 3 }}
-      />
+      {/* Nazwa produktu z przyciskiem skanera */}
+      <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
+        <TextField
+          fullWidth
+          label="Nazwa produktu"
+          placeholder="np. Mleko"
+          value={formData.nazwa}
+          onChange={onChange('nazwa')}
+          required
+        />
+        <IconButton
+          onClick={() => {
+            console.log('ProductForm: Kliknięto przycisk skanera');
+            setScannerOpen(true);
+          }}
+          color="primary"
+          sx={{ minWidth: 48 }}
+          title="Skanuj kod kreskowy"
+        >
+          <QrCodeScanner />
+        </IconButton>
+      </Box>
 
       {/* Ilość + Jednostka */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -149,6 +213,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         sx={{ mb: 3 }}
       />
 
+      {/* Marka produktu */}
+      <TextField
+        fullWidth
+        label="Marka (opcjonalnie)"
+        placeholder="np. Łaciate"
+        value={formData.marka || ''}
+        onChange={onChange('marka')}
+        sx={{ mb: 3 }}
+      />
+
       {/* Error Display */}
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
@@ -165,6 +239,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           Dodajesz do: <strong>{spizarniaNazwa}</strong>
         </Typography>
       )}
+      
+      {/* Komponent skanera kodów kreskowych */}
+      <BarcodeScanner
+        open={scannerOpen}
+        onClose={() => {
+          console.log('ProductForm: Zamykanie skanera');
+          setScannerOpen(false);
+        }}
+        onScan={handleBarcodeData}
+      />
     </Box>
   );
 };

@@ -74,6 +74,7 @@ export interface Produkt {
   lokalizacja?: string; // ID lokalizacji z SpizarniaLokalizacja
   obrazek?: string;
   kodKreskowy?: string;
+  marka?: string; // Marka produktu (z skanera lub ręcznie)
   notatki?: string;
   cena?: number;
   sklep?: string;
@@ -145,6 +146,16 @@ export const KATEGORIE: Record<string, Kategoria> = {
     nazwa: 'Pieczywo',
     ikona: '🍞',
     podkategorie: ['Chleb', 'Bułki', 'Bagietki', 'Pieczywo mrożone']
+  },
+  KOSMETYKI: {
+    nazwa: 'Kosmetyki',
+    ikona: '💄',
+    podkategorie: ['Pielęgnacja twarzy', 'Pielęgnacja ciała', 'Makijaż', 'Perfumy', 'Higiena']
+  },
+  CHEMIA: {
+    nazwa: 'Chemia domowa',
+    ikona: '🧽',
+    podkategorie: ['Środki czyszczące', 'Pranie', 'Naczynia', 'Łazienka', 'Dezynfekcja']
   },
   INNE: {
     nazwa: 'Inne',
