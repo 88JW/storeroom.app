@@ -25,12 +25,23 @@ export interface SpizarniaMetadata {
   updatedAt: Timestamp;
   ikona?: string;
   ustawienia: SpizarniaUstawienia;
+  lokalizacje?: SpizarniaLokalizacja[]; // Dostępne lokalizacje w tej spiżarni
 }
 
 export interface SpizarniaUstawienia {
   powiadomieniaOWażności: boolean;
   dziPrzedWażnością: number;
   publicznaWidoczność: boolean;
+}
+
+// 📍 Lokalizacja w spiżarni (np. lodówka, zamrażarka, szafka)
+export interface SpizarniaLokalizacja {
+  id: string;
+  nazwa: string;
+  ikona: string;
+  kolor: string;
+  opis?: string;
+  createdAt: Timestamp;
 }
 
 export interface SpizarniaCzłonek {
@@ -60,7 +71,7 @@ export interface Produkt {
   dataModyfikacji: Timestamp;
   dodanePrzez: string; // userId
   zmodyfikowanePrzez?: string; // userId
-  lokalizacja?: 'lodówka' | 'zamrażarka' | 'szafka';
+  lokalizacja?: string; // ID lokalizacji z SpizarniaLokalizacja
   obrazek?: string;
   kodKreskowy?: string;
   notatki?: string;
@@ -142,7 +153,7 @@ export const KATEGORIE: Record<string, Kategoria> = {
   }
 };
 
-// 📍 Lokalizacje w spiżarni
+// 📍 Lokalizacje w spiżarni (dla kompatybilności wstecznej - teraz używamy SpizarniaLokalizacja)
 export const LOKALIZACJE = {
   LODÓWKA: { nazwa: 'Lodówka', ikona: '❄️', kolor: '#3B82F6' },
   ZAMRAŻARKA: { nazwa: 'Zamrażarka', ikona: '🧊', kolor: '#1E40AF' },
@@ -150,6 +161,13 @@ export const LOKALIZACJE = {
   SPIŻARNIA: { nazwa: 'Spiżarnia', ikona: '🏠', kolor: '#F59E0B' },
   BALKON: { nazwa: 'Balkon', ikona: '🌿', kolor: '#10B981' }
 };
+
+// 📍 Domyślne lokalizacje dla nowych spiżarni
+export const DOMYSLNE_LOKALIZACJE: Omit<SpizarniaLokalizacja, 'id' | 'createdAt'>[] = [
+  { nazwa: 'Lodówka', ikona: '❄️', kolor: '#3B82F6', opis: 'Główna komora chłodnicza' },
+  { nazwa: 'Zamrażarka', ikona: '🧊', kolor: '#1E40AF', opis: 'Komora zamrażająca' },
+  { nazwa: 'Szafka', ikona: '🗄️', kolor: '#8B5CF6', opis: 'Szafka kuchenna lub spiżarnia' }
+];
 
 // 📐 Jednostki miary
 export const JEDNOSTKI = [
@@ -185,7 +203,7 @@ export type Jednostka = typeof JEDNOSTKI[number]['value'];
 // 🔍 Filtry i sortowanie
 export interface ProduktFiltr {
   kategoria?: string;
-  lokalizacja?: Lokalizacja;
+  lokalizacja?: string; // ID lokalizacji
   status?: ProduktStatus;
   wygasaWDniach?: number;
   szukaj?: string;

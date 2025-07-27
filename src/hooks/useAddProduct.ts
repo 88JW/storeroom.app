@@ -5,6 +5,7 @@ import { SpizarniaService } from '../services/SpizarniaService';
 import { ProduktService } from '../services/ProduktService';
 import { Timestamp } from 'firebase/firestore';
 import type { ProduktStatus } from '../types';
+import { useSpizarniaLokalizacje } from './useSpizarniaLokalizacje';
 
 interface ProductFormData {
   nazwa: string;
@@ -22,7 +23,7 @@ const initialFormData: ProductFormData = {
   ilość: 1,
   jednostka: 'szt' as const,
   dataWażności: '',
-  lokalizacja: 'lodówka' as const,
+  lokalizacja: '', // Zostanie ustawione dynamicznie
   opis: ''
 };
 
@@ -39,6 +40,9 @@ export const useAddProduct = () => {
   const [error, setError] = useState<string | null>(null);
   const [spizarniaId, setSpizarniaId] = useState<string | null>(null);
   const [spizarniaNazwa, setSpizarniaNazwa] = useState<string>('');
+
+  // Load lokalizacje for default selection
+  const { lokalizacje } = useSpizarniaLokalizacje(spizarniaId);
 
   // Load spiżarnia data
   useEffect(() => {
@@ -70,6 +74,16 @@ export const useAddProduct = () => {
 
     loadSpizarnia();
   }, [searchParams, user]);
+
+  // Set default lokalizacja when lokalizacje are loaded
+  useEffect(() => {
+    if (lokalizacje.length > 0 && !formData.lokalizacja) {
+      setFormData(prev => ({
+        ...prev,
+        lokalizacja: lokalizacje[0].id
+      }));
+    }
+  }, [lokalizacje, formData.lokalizacja]);
 
   const handleInputChange = (field: keyof ProductFormData) => (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { value: string | number } }
@@ -170,6 +184,7 @@ export const useAddProduct = () => {
     formData,
     loading,
     error,
+    spizarniaId,
     spizarniaNazwa,
     isFormValid,
     handleInputChange,

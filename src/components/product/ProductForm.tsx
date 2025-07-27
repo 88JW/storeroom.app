@@ -11,6 +11,7 @@ import {
   Typography
 } from '@mui/material';
 import { KATEGORIE, JEDNOSTKI } from '../../types';
+import { useSpizarniaLokalizacje } from '../../hooks/useSpizarniaLokalizacje';
 
 interface ProductFormData {
   nazwa: string;
@@ -27,14 +28,19 @@ interface ProductFormProps {
   error: string | null;
   onChange: (field: keyof ProductFormData) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { value: string | number } }) => void;
   spizarniaNazwa?: string;
+  spizarniaId?: string; // Dodane dla lokalizacji
 }
 
 export const ProductForm: React.FC<ProductFormProps> = ({
   formData,
   error,
   onChange,
-  spizarniaNazwa
+  spizarniaNazwa,
+  spizarniaId
 }) => {
+  // 📍 Pobierz lokalizacje z spiżarni
+  const { lokalizacje, loading: lokalizacjeLoading } = useSpizarniaLokalizacje(spizarniaId || null);
+
   return (
     <Box sx={{ space: 3 }}>
       {/* Nazwa produktu */}
@@ -114,10 +120,20 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           value={formData.lokalizacja}
           label="Lokalizacja"
           onChange={onChange('lokalizacja')}
+          disabled={lokalizacjeLoading}
         >
-          <MenuItem value="lodówka">🧊 Lodówka</MenuItem>
-          <MenuItem value="zamrażarka">❄️ Zamrażarka</MenuItem>
-          <MenuItem value="szafka">🗄️ Szafka</MenuItem>
+          {lokalizacje.length === 0 ? (
+            <MenuItem disabled>Brak lokalizacji</MenuItem>
+          ) : (
+            lokalizacje.map((lokalizacja) => (
+              <MenuItem key={lokalizacja.id} value={lokalizacja.id}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography>{lokalizacja.ikona}</Typography>
+                  <Typography>{lokalizacja.nazwa}</Typography>
+                </Box>
+              </MenuItem>
+            ))
+          )}
         </Select>
       </FormControl>
 

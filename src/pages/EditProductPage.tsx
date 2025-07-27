@@ -25,6 +25,7 @@ const EditProductPage: React.FC = () => {
     loading,
     loadingProduct,
     error,
+    spizarniaId,
     spizarniaNazwa,
     isFormValid,
     handleInputChange,
@@ -96,12 +97,15 @@ const EditProductPage: React.FC = () => {
 
         {/* Main Content */}
         <Container sx={{ maxWidth: 'sm', flex: 1, pb: 10 }}>
-          <EditProductForm 
-            formData={formData}
-            error={error}
-            onChange={handleInputChange}
-            spizarniaNazwa={spizarniaNazwa}
-          />
+          {spizarniaId && (
+            <EditProductForm 
+              formData={formData}
+              error={error}
+              onChange={handleInputChange}
+              spizarniaNazwa={spizarniaNazwa}
+              spizarniaId={spizarniaId}
+            />
+          )}
         </Container>
 
         {/* Footer */}

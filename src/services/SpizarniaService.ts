@@ -14,8 +14,10 @@ import { db } from '../firebase';
 import type { 
   SpizarniaMetadata, 
   SpizarniaCzłonek, 
-  UserSpizarnia
+  UserSpizarnia,
+  SpizarniaLokalizacja
 } from '../types';
+import { DOMYSLNE_LOKALIZACJE } from '../types';
 
 export class SpizarniaService {
   
@@ -74,8 +76,16 @@ export class SpizarniaService {
       const spizarniaRef = doc(collection(db, 'spiżarnie'));
       const spizarniaId = spizarniaRef.id;
       
-      // 2. Metadane spiżarni
+      // 2. Metadane spiżarni z domyślnymi lokalizacjami
       const metadataRef = doc(db, 'spiżarnie', spizarniaId, 'metadata', 'info');
+      
+      // Przygotuj domyślne lokalizacje z ID i timestampami
+      const domyslneLokalizacje: SpizarniaLokalizacja[] = DOMYSLNE_LOKALIZACJE.map((lok, index) => ({
+        id: `default-${index}-${Date.now()}`,
+        ...lok,
+        createdAt: Timestamp.fromDate(new Date())
+      }));
+      
       const metadataData: SpizarniaMetadata = {
         nazwa,
         opis,
@@ -84,6 +94,7 @@ export class SpizarniaService {
         createdAt: serverTimestamp() as Timestamp,
         updatedAt: serverTimestamp() as Timestamp,
         ikona: ikona || '🏠',
+        lokalizacje: domyslneLokalizacje, // Dodaj domyślne lokalizacje
         ustawienia: {
           powiadomieniaOWażności: true,
           dziPrzedWażnością: 3,

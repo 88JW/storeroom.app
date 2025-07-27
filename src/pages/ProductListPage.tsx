@@ -3,10 +3,16 @@ import {
   Container,
   Box,
   Typography,
-  Alert
+  Alert,
+  Fab,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText
 } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { MoreVert, LocationOn } from '@mui/icons-material';
 import { ProduktService } from '../services/ProduktService';
 import { SpizarniaService } from '../services/SpizarniaService';
 import type { Produkt, SpizarniaMetadata } from '../types';
@@ -17,6 +23,7 @@ import { ProductCard } from '../components/spizarnia/ProductCard';
 import { SearchBar } from '../components/common/SearchBar';
 import { PageHeader } from '../components/common/PageHeader';
 import { useAuth } from '../hooks/useAuth';
+import { useSpizarniaLokalizacje } from '../hooks/useSpizarniaLokalizacje';
 
 const ProductListPage: React.FC = () => {
   const [produkty, setProdukty] = useState<Produkt[]>([]);
@@ -26,10 +33,25 @@ const ProductListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeSpizarnia, setActiveSpizarnia] = useState<SpizarniaMetadata | null>(null);
+  const [currentSpizarniaId, setCurrentSpizarniaId] = useState<string | null>(null);
+
+  // Menu state
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(menuAnchorEl);
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
+
+  // 📍 Pobierz lokalizacje dla filtrów
+  const { lokalizacje } = useSpizarniaLokalizacje(currentSpizarniaId);
+
+  // 🏷️ Utwórz filtry z lokalizacji
+  const filters = ['wszystko', ...lokalizacje.map(lok => lok.id)];
+  const filterLabels = lokalizacje.reduce((acc, lok) => {
+    acc[lok.id] = `${lok.ikona} ${lok.nazwa}`;
+    return acc;
+  }, { wszystko: 'Wszystko' } as Record<string, string>);
 
   // 🔗 Pobieranie produktów z wybranej spiżarni
   useEffect(() => {
@@ -58,6 +80,9 @@ const ProductListPage: React.FC = () => {
           navigate(`/lista?spizarnia=${userSpizarnie[0].id}`);
           return;
         }
+
+        // Ustaw ID spiżarni dla hooka lokalizacji
+        setCurrentSpizarniaId(spizarniaId);
 
         // Pobierz metadane spiżarni poprzez getUserSpiżarnie
         if (!user?.uid) {
@@ -126,6 +151,22 @@ const ProductListPage: React.FC = () => {
     }
   };
 
+  const handleManageLokalizacje = () => {
+    const spizarniaId = searchParams.get('spizarnia');
+    if (spizarniaId) {
+      navigate(`/lokalizacje/${spizarniaId}`);
+    }
+    setMenuAnchorEl(null);
+  };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+  };
+
   const handleProductClick = (produkt: Produkt) => {
     // TODO: Navigate to product details
     console.log('Clicked product:', produkt);
@@ -180,6 +221,8 @@ const ProductListPage: React.FC = () => {
           onSearchChange={setSearchQuery}
           selectedFilter={selectedFilter}
           onFilterChange={setSelectedFilter}
+          filters={filters}
+          filterLabels={filterLabels}
         />
 
         {/* 📋 Lista produktów */}
@@ -213,7 +256,44 @@ const ProductListPage: React.FC = () => {
           )}
         </Container>
 
-        {/* 📱 Bottom Navigation */}
+        {/* � FAB Menu for additional actions */}
+        <Fab
+          color="secondary"
+          aria-label="more options"
+          onClick={handleMenuOpen}
+          sx={{
+            position: 'fixed',
+            bottom: 90, // Above bottom navigation
+            right: 16,
+            zIndex: 1000
+          }}
+        >
+          <MoreVert />
+        </Fab>
+
+        {/* 📝 Action Menu */}
+        <Menu
+          anchorEl={menuAnchorEl}
+          open={menuOpen}
+          onClose={handleMenuClose}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          transformOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+        >
+          <MenuItem onClick={handleManageLokalizacje}>
+            <ListItemIcon>
+              <LocationOn fontSize="small" />
+            </ListItemIcon>
+            <ListItemText primary="Zarządzaj lokalizacjami" />
+          </MenuItem>
+        </Menu>
+
+        {/* �📱 Bottom Navigation */}
         <AppBottomNavigation />
       </Box>
     </ThemeProvider>

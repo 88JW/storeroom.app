@@ -23,7 +23,7 @@ const getInitialFormData = (): EditProductFormData => ({
   ilość: 1,
   jednostka: 'szt' as const,
   dataWażności: '',
-  lokalizacja: 'lodówka' as const,
+  lokalizacja: '',
   opis: '',
   status: 'dostępny' as ProduktStatus
 });
@@ -96,7 +96,7 @@ export const useEditProduct = () => {
           ilość: produkt.ilość,
           jednostka: produkt.jednostka,
           dataWażności: formatDateForInput(produkt.dataWażności),
-          lokalizacja: produkt.lokalizacja || 'lodówka',
+          lokalizacja: produkt.lokalizacja || '',
           opis: produkt.notatki || '',
           status: produkt.status
         });
@@ -142,12 +142,12 @@ export const useEditProduct = () => {
       // Przygotuj dane do aktualizacji
       const dataWażności = formData.dataWażności ? new Date(formData.dataWażności) : null;
       
-      const updatedData: Record<string, any> = {
+      const updatedData: Record<string, unknown> = {
         nazwa: formData.nazwa.trim(),
         kategoria: formData.kategoria,
         ilość: formData.ilość,
         jednostka: formData.jednostka as 'szt' | 'kg' | 'l' | 'g' | 'ml',
-        lokalizacja: formData.lokalizacja as 'lodówka' | 'zamrażarka' | 'szafka',
+        lokalizacja: formData.lokalizacja,
         status: formData.status
       };
 
@@ -232,6 +232,7 @@ export const useEditProduct = () => {
     loading,
     loadingProduct,
     error,
+    spizarniaId,
     spizarniaNazwa,
     isFormValid,
     handleInputChange,

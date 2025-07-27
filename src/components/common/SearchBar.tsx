@@ -13,6 +13,7 @@ interface SearchBarProps {
   selectedFilter: string;
   onFilterChange: (filter: string) => void;
   filters?: string[];
+  filterLabels?: Record<string, string>; // Mapa ID -> nazwa wyświetlana
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
@@ -20,7 +21,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   onSearchChange,
   selectedFilter,
   onFilterChange,
-  filters = ['wszystko', 'lodówka', 'zamrażarka', 'szafka']
+  filters = ['wszystko', 'lodówka', 'zamrażarka', 'szafka'],
+  filterLabels = {}
 }) => {
   return (
     <Box sx={{ px: 2, pb: 2 }}>
@@ -48,29 +50,32 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         '&::-webkit-scrollbar': { display: 'none' },
         scrollbarWidth: 'none'
       }}>
-        {filters.map((filter) => (
-          <Button
-            key={filter}
-            variant={selectedFilter === filter ? 'contained' : 'outlined'}
-            size="small"
-            onClick={() => onFilterChange(filter)}
-            sx={{ 
-              minWidth: 'auto',
-              whiteSpace: 'nowrap',
-              ...(selectedFilter !== filter && {
-                bgcolor: '#f0f2f4',
-                color: '#111418',
-                borderColor: 'transparent',
-                '&:hover': {
-                  bgcolor: '#e5e7eb',
+        {filters.map((filter) => {
+          const displayName = filterLabels[filter] || filter.charAt(0).toUpperCase() + filter.slice(1);
+          return (
+            <Button
+              key={filter}
+              variant={selectedFilter === filter ? 'contained' : 'outlined'}
+              size="small"
+              onClick={() => onFilterChange(filter)}
+              sx={{ 
+                minWidth: 'auto',
+                whiteSpace: 'nowrap',
+                ...(selectedFilter !== filter && {
+                  bgcolor: '#f0f2f4',
+                  color: '#111418',
                   borderColor: 'transparent',
-                }
-              })
-            }}
-          >
-            {filter.charAt(0).toUpperCase() + filter.slice(1)}
-          </Button>
-        ))}
+                  '&:hover': {
+                    bgcolor: '#e5e7eb',
+                    borderColor: 'transparent',
+                  }
+                })
+              }}
+            >
+              {displayName}
+            </Button>
+          );
+        })}
       </Box>
     </Box>
   );

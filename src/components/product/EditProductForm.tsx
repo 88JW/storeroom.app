@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { KATEGORIE, JEDNOSTKI } from '../../types';
 import type { ProduktStatus } from '../../types';
+import { useSpizarniaLokalizacje } from '../../hooks/useSpizarniaLokalizacje';
 
 interface EditProductFormData {
   nazwa: string;
@@ -29,14 +30,17 @@ interface EditProductFormProps {
   error: string | null;
   onChange: (field: keyof EditProductFormData) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { value: string | number } }) => void;
   spizarniaNazwa?: string;
+  spizarniaId: string;
 }
 
 export const EditProductForm: React.FC<EditProductFormProps> = ({
   formData,
   error,
   onChange,
-  spizarniaNazwa
+  spizarniaNazwa,
+  spizarniaId
 }) => {
+  const { lokalizacje, loading: lokalizacjeLoading } = useSpizarniaLokalizacje(spizarniaId);
   return (
     <Box sx={{ space: 3 }}>
       {/* Nazwa produktu */}
@@ -116,10 +120,13 @@ export const EditProductForm: React.FC<EditProductFormProps> = ({
           value={formData.lokalizacja}
           label="Lokalizacja"
           onChange={onChange('lokalizacja')}
+          disabled={lokalizacjeLoading}
         >
-          <MenuItem value="lodówka">🧊 Lodówka</MenuItem>
-          <MenuItem value="zamrażarka">❄️ Zamrażarka</MenuItem>
-          <MenuItem value="szafka">🗄️ Szafka</MenuItem>
+          {lokalizacje.map(lokalizacja => (
+            <MenuItem key={lokalizacja.id} value={lokalizacja.id}>
+              {lokalizacja.ikona} {lokalizacja.nazwa}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
 
