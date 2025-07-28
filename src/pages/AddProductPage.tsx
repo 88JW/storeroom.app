@@ -6,6 +6,7 @@ import { useAddProduct } from '../hooks/useAddProduct';
 import { ProductFormHeader } from '../components/product/ProductFormHeader';
 import { ProductForm } from '../components/product/ProductForm';
 import { ProductFormFooter } from '../components/product/ProductFormFooter';
+import { PWAStatus } from '../components/pwa/PWAStatus';
 
 const AddProductPage: React.FC = () => {
   const {
@@ -36,6 +37,11 @@ const AddProductPage: React.FC = () => {
 
         {/* Main Content */}
         <Container sx={{ maxWidth: 'sm', flex: 1, pb: 10 }}>
+          {/* PWA Status - compact mode */}
+          <Box sx={{ mb: 2 }}>
+            <PWAStatus compact />
+          </Box>
+          
           <ProductForm 
             formData={formData}
             error={error}

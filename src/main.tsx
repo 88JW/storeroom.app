@@ -14,6 +14,23 @@ import EditProductPage from './pages/EditProductPage';
 import CreateSpizarniaPage from './pages/CreateSpizarniaPage';
 import ManageLokalizacjePage from './pages/ManageLokalizacjePage';
 
+// 📱 PWA Initialization
+console.log('🚀 Storeroom App starting...');
+
+// Check PWA support
+if ('serviceWorker' in navigator) {
+  console.log('✅ PWA: Service Worker supported');
+} else {
+  console.warn('🚫 PWA: Service Worker not supported');
+}
+
+// Log app version and build info
+console.log('📱 App Info:', {
+  version: '1.0.0',
+  build: 'PWA-ready',
+  timestamp: new Date().toISOString()
+});
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
