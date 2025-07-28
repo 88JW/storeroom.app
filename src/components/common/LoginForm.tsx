@@ -8,6 +8,7 @@ import {
   Alert
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { Link as RouterLink } from 'react-router-dom';
 
 interface LoginFormProps {
   onSubmit: (email: string, password: string) => Promise<void>;
@@ -158,14 +159,36 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
           {/* 🔗 Links */}
           <Box sx={{ textAlign: 'center', mt: 2 }}>
-            <Link href="#" variant="body2" sx={{ color: 'primary.main' }}>
+            <Link 
+              component={RouterLink}
+              to="/resetuj-haslo"
+              variant="body2" 
+              sx={{ 
+                color: 'primary.main',
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
               Zapomniałeś hasła?
             </Link>
           </Box>
           <Box sx={{ textAlign: 'center', mt: 1 }}>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               Nie masz konta?{' '}
-              <Link href="#" sx={{ color: 'primary.main' }}>
+              <Link 
+                component={RouterLink}
+                to="/rejestracja"
+                sx={{ 
+                  color: 'primary.main',
+                  textDecoration: 'none',
+                  fontWeight: 'bold',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
                 Zarejestruj się
               </Link>
             </Typography>

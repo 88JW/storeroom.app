@@ -14,6 +14,8 @@ import EditProductPage from './pages/EditProductPage';
 import CreateSpizarniaPage from './pages/CreateSpizarniaPage';
 import ManageLokalizacjePage from './pages/ManageLokalizacjePage';
 import SettingsPage from './pages/SettingsPage';
+import RegisterPage from './pages/RegisterPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 // 📱 PWA Initialization
 console.log('🚀 Storeroom App starting...');
@@ -40,6 +42,8 @@ createRoot(document.getElementById('root')!).render(
           {/* Publiczne trasy */}
           <Route path="/welcome" element={<WelcomePageNew />} />
           <Route path="/logowanie" element={<LoginPage />} />
+          <Route path="/rejestracja" element={<RegisterPage />} />
+          <Route path="/resetuj-haslo" element={<ResetPasswordPage />} />
 
           {/* Chronione trasy */}
           <Route 

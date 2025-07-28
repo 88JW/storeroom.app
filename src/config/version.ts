@@ -3,8 +3,8 @@ import packageJson from '../../package.json';
 
 export const APP_VERSION = {
   version: packageJson.version,
-  buildNumber: '2025.01.28',
-  codeName: 'Storeroom PWA',
+  buildNumber: '2025.01.28.2',
+  codeName: 'Storeroom PWA - Auth Complete',
   releaseDate: '2025-01-28',
   environment: process.env.NODE_ENV || 'development'
 };
