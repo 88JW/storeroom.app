@@ -38,7 +38,6 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
     return reader;
   });
   const [lastScannedCode, setLastScannedCode] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false); // Dodajemy flag dla przetwarzania
 
   // ⏹️ Zatrzymanie skanera
   const stopScanning = useCallback(() => {
@@ -159,22 +158,16 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
         stream,
         videoRef.current!,
         (result, error) => {
-          if (result && !isProcessing) { // Sprawdź czy nie przetwarzamy już innego kodu
+          if (result) {
             const barcode = result.getText();
             console.log('🎉 BarcodeScanner: ZESKANOWANO KOD:', barcode);
             
             // Sprawdź czy to nie jest ten sam kod co poprzednio
             if (barcode !== lastScannedCode) {
               console.log('✅ BarcodeScanner: Nowy kod - wywoływanie onScan');
-              setIsProcessing(true); // Zablokuj przetwarzanie kolejnych kodów
               setLastScannedCode(barcode);
               onScan(barcode);
-              
-              // Zatrzymaj skaner po krótkim opóźnieniu
-              setTimeout(() => {
-                stopScanning();
-                setIsProcessing(false);
-              }, 100);
+              stopScanning();
             }
           }
           
@@ -196,7 +189,7 @@ export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({
       );
       setIsScanning(false);
     }
-  }, [codeReader, onScan, stopScanning, lastScannedCode, isProcessing]);
+  }, [codeReader, onScan, stopScanning, lastScannedCode]);
 
   // 🔄 Efekt dla dialogu
   useEffect(() => {

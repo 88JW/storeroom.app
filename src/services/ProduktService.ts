@@ -1,5 +1,6 @@
 // 🛒 Serwis do zarządzania produktami w spiżarni
 
+// Dodawanie nowych importów dla typowania
 import {
   collection,
   doc,
@@ -10,7 +11,8 @@ import {
   query,
   where,
   orderBy,
-  serverTimestamp
+  serverTimestamp,
+  QueryConstraint
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { 
@@ -42,7 +44,7 @@ export class ProduktService {
       
       // Buduj zapytanie
       const produktyRef = collection(db, 'spiżarnie', spizarniaId, 'produkty');
-      let queryConstraints: any[] = [];
+      const queryConstraints: QueryConstraint[] = [];
       
       // Aplikuj filtry
       if (filtr) {
@@ -61,9 +63,12 @@ export class ProduktService {
       if (sortowanie) {
         queryConstraints.push(orderBy(sortowanie.pole, sortowanie.kierunek));
       } else {
-        // Domyślne sortowanie po dacie ważności
-        queryConstraints.push(orderBy('dataWażności', 'asc'));
+        // Domyślne sortowanie po dacie dodania (zawsze jest obecna)
+        queryConstraints.push(orderBy('dataDodania', 'desc'));
       }
+      
+      console.log('ProduktService: Aplikowanie filtrów:', filtr);
+      console.log('ProduktService: Aplikowanie sortowania:', sortowanie);
       
       const q = query(produktyRef, ...queryConstraints);
       const snapshot = await getDocs(q);

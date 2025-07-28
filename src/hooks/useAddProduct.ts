@@ -164,8 +164,6 @@ export const useAddProduct = () => {
       }
 
       // Dodaj produkt do Firestore
-      console.log('AddProductPage: Dodawanie produktu do spiżarni:', spizarniaId);
-      console.log('AddProductPage: Dane produktu:', nowyProdukt);
       await ProduktService.addProdukt(spizarniaId, user.uid, nowyProdukt);
 
       // Reset formularza
