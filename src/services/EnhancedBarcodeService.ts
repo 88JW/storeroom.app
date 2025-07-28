@@ -20,8 +20,8 @@ class MultiSourceBarcodeService {
   private readonly UPC_DATABASE_URL = 'https://api.upcitemdb.com/prod/trial/lookup';
   
   // API Keys (dodaj swoje klucze)
-  private readonly BARCODE_LOOKUP_KEY = process.env.REACT_APP_BARCODE_LOOKUP_KEY;
-  private readonly UPC_DATABASE_KEY = process.env.REACT_APP_UPC_DATABASE_KEY;
+  private readonly BARCODE_LOOKUP_KEY = typeof process !== 'undefined' ? process.env.REACT_APP_BARCODE_LOOKUP_KEY : undefined;
+  private readonly UPC_DATABASE_KEY = typeof process !== 'undefined' ? process.env.REACT_APP_UPC_DATABASE_KEY : undefined;
 
   // Lokalna baza produktów (może być w localStorage lub Firestore)
   private customDatabase: Map<string, ProductData> = new Map([

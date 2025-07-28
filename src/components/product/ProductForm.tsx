@@ -13,7 +13,7 @@ import {
 import { KATEGORIE, JEDNOSTKI } from '../../types';
 import { useSpizarniaLokalizacje } from '../../hooks/useSpizarniaLokalizacje';
 import { BarcodeScanner } from '../barcode/BarcodeScanner';
-import { BarcodeService } from '../../services/BarcodeService';
+import { EnhancedBarcodeService } from '../../services/EnhancedBarcodeService';
 
 interface ProductFormData {
   nazwa: string;
@@ -31,8 +31,8 @@ interface ProductFormProps {
   error: string | null;
   onChange: (field: keyof ProductFormData) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { value: string | number } }) => void;
   onBarcodeData?: (data: Partial<ProductFormData>) => void;
-  scannerOpen?: boolean; // Dodane dla zewnętrznego kontrolowania skanera
-  setScannerOpen?: (open: boolean) => void; // Dodane dla zewnętrznego kontrolowania skanera
+  scannerOpen?: boolean;
+  setScannerOpen?: (open: boolean) => void;
   spizarniaNazwa?: string;
   spizarniaId?: string; // Dodane dla lokalizacji
 }
@@ -62,8 +62,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       
       // Pobierz dane produktu z nowego systemu wieloźródłowego
       console.log('ProductForm: Pobieranie danych z systemu wieloźródłowego...');
-      const barcodeService = new BarcodeService();
-      const productData = await barcodeService.getProductData(barcode);
+      const productData = await EnhancedBarcodeService.getProductData(barcode);
       console.log('ProductForm: Otrzymane dane produktu:', productData);
       
       if (productData && productData.znaleziony && onBarcodeData) {

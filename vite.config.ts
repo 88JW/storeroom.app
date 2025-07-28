@@ -72,4 +72,8 @@ export default defineConfig({
       ]
     }
   })],
+  define: {
+    // Dodaj obsługę process.env dla kompatybilności z React Apps
+    'process.env': {}
+  }
 })

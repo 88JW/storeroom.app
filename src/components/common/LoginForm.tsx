@@ -12,18 +12,14 @@ import { Link as RouterLink } from 'react-router-dom';
 
 interface LoginFormProps {
   onSubmit: (email: string, password: string) => Promise<void>;
-  onInitializeDatabase: () => Promise<void>;
   error: string | null;
   loading: boolean;
-  initLoading: boolean;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
   onSubmit,
-  onInitializeDatabase,
   error,
-  loading,
-  initLoading
+  loading
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -193,38 +189,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               </Link>
             </Typography>
           </Box>
-        </Box>
-
-        {/* 🔧 Development Tools */}
-        <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid #e5e7eb' }}>
-          <Typography
-            variant="body2"
-            sx={{
-              color: 'text.secondary',
-              mb: 2,
-              textAlign: 'center',
-            }}
-          >
-            🧪 Narzędzia deweloperskie
-          </Typography>
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={onInitializeDatabase}
-            disabled={initLoading}
-            sx={{
-              height: 40,
-              fontSize: '0.875rem',
-              borderColor: 'primary.main',
-              color: 'primary.main',
-              '&:hover': {
-                bgcolor: 'primary.main',
-                color: 'white',
-              },
-            }}
-          >
-            {initLoading ? 'Inicjalizacja...' : '🔄 Inicjalizuj bazę danych'}
-          </Button>
         </Box>
       </Box>
     </Box>

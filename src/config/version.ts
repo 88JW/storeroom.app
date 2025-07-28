@@ -6,7 +6,7 @@ export const APP_VERSION = {
   buildNumber: '2025.01.28.2',
   codeName: 'Storeroom PWA - Auth Complete',
   releaseDate: '2025-01-28',
-  environment: process.env.NODE_ENV || 'development'
+  environment: typeof process !== 'undefined' ? (process.env.NODE_ENV || 'development') : 'development'
 };
 
 export const getAppInfo = () => {

@@ -42,7 +42,7 @@ export const useAddProduct = () => {
   const [error, setError] = useState<string | null>(null);
   const [spizarniaId, setSpizarniaId] = useState<string | null>(null);
   const [spizarniaNazwa, setSpizarniaNazwa] = useState<string>('');
-  const [scannerOpen, setScannerOpen] = useState(false); // Dodane dla skanera
+  const [scannerOpen, setScannerOpen] = useState(false);
 
   // Load lokalizacje for default selection
   const { lokalizacje } = useSpizarniaLokalizacje(spizarniaId);
@@ -110,6 +110,11 @@ export const useAddProduct = () => {
       console.log('useAddProduct: Nowe dane formularza:', JSON.stringify(newFormData, null, 2));
       return newFormData;
     });
+  };
+
+  const handleScanBarcode = () => {
+    console.log('useAddProduct: Otwieranie skanera');
+    setScannerOpen(true);
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -183,11 +188,6 @@ export const useAddProduct = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleScanBarcode = () => {
-    console.log('useAddProduct: Otwieranie skanera');
-    setScannerOpen(true);
   };
 
   const handleGoBack = () => {
