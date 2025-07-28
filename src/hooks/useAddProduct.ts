@@ -42,6 +42,7 @@ export const useAddProduct = () => {
   const [error, setError] = useState<string | null>(null);
   const [spizarniaId, setSpizarniaId] = useState<string | null>(null);
   const [spizarniaNazwa, setSpizarniaNazwa] = useState<string>('');
+  const [scannerOpen, setScannerOpen] = useState(false); // Dodane dla skanera
 
   // Load lokalizacje for default selection
   const { lokalizacje } = useSpizarniaLokalizacje(spizarniaId);
@@ -185,8 +186,8 @@ export const useAddProduct = () => {
   };
 
   const handleScanBarcode = () => {
-    // TODO: Implementacja skanowania kodów kreskowych
-    setError('Skanowanie kodów kreskowych będzie dostępne wkrótce');
+    console.log('useAddProduct: Otwieranie skanera');
+    setScannerOpen(true);
   };
 
   const handleGoBack = () => {
@@ -206,6 +207,8 @@ export const useAddProduct = () => {
     spizarniaId,
     spizarniaNazwa,
     isFormValid,
+    scannerOpen,
+    setScannerOpen,
     handleInputChange,
     handleBarcodeData,
     handleSubmit,

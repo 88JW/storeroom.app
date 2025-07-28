@@ -8,10 +8,8 @@ import {
   Box,
   Grid,
   Alert,
-  Typography,
-  IconButton
+  Typography
 } from '@mui/material';
-import { QrCodeScanner } from '@mui/icons-material';
 import { KATEGORIE, JEDNOSTKI } from '../../types';
 import { useSpizarniaLokalizacje } from '../../hooks/useSpizarniaLokalizacje';
 import { BarcodeScanner } from '../barcode/BarcodeScanner';
@@ -33,6 +31,8 @@ interface ProductFormProps {
   error: string | null;
   onChange: (field: keyof ProductFormData) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { value: string | number } }) => void;
   onBarcodeData?: (data: Partial<ProductFormData>) => void;
+  scannerOpen?: boolean; // Dodane dla zewnętrznego kontrolowania skanera
+  setScannerOpen?: (open: boolean) => void; // Dodane dla zewnętrznego kontrolowania skanera
   spizarniaNazwa?: string;
   spizarniaId?: string; // Dodane dla lokalizacji
 }
@@ -42,14 +42,18 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   error,
   onChange,
   onBarcodeData,
+  scannerOpen: externalScannerOpen,
+  setScannerOpen: externalSetScannerOpen,
   spizarniaNazwa,
   spizarniaId
 }) => {
   // 📍 Pobierz lokalizacje z spiżarni
   const { lokalizacje, loading: lokalizacjeLoading } = useSpizarniaLokalizacje(spizarniaId || null);
   
-  // 📱 Stan skanera kodów kreskowych
-  const [scannerOpen, setScannerOpen] = useState(false);
+  // 📱 Stan skanera kodów kreskowych - użyj zewnętrznego stanu jeśli dostępny
+  const [internalScannerOpen, setInternalScannerOpen] = useState(false);
+  const scannerOpen = externalScannerOpen !== undefined ? externalScannerOpen : internalScannerOpen;
+  const setScannerOpen = externalSetScannerOpen || setInternalScannerOpen;
 
   // 📱 Obsługa danych ze skanera
   const handleBarcodeData = async (barcode: string) => {
@@ -95,28 +99,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   return (
     <Box sx={{ space: 3 }}>
-      {/* Nazwa produktu z przyciskiem skanera */}
-      <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
-        <TextField
-          fullWidth
-          label="Nazwa produktu"
-          placeholder="np. Mleko"
-          value={formData.nazwa}
-          onChange={onChange('nazwa')}
-          required
-        />
-        <IconButton
-          onClick={() => {
-            console.log('ProductForm: Kliknięto przycisk skanera');
-            setScannerOpen(true);
-          }}
-          color="primary"
-          sx={{ minWidth: 48 }}
-          title="Skanuj kod kreskowy"
-        >
-          <QrCodeScanner />
-        </IconButton>
-      </Box>
+      {/* Nazwa produktu */}
+      <TextField
+        fullWidth
+        label="Nazwa produktu"
+        placeholder="np. Mleko"
+        value={formData.nazwa}
+        onChange={onChange('nazwa')}
+        required
+        sx={{ mb: 3 }}
+      />
 
       {/* Ilość + Jednostka */}
       <Grid container spacing={2} sx={{ mb: 3 }}>

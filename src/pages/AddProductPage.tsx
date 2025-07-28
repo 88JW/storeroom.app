@@ -15,6 +15,8 @@ const AddProductPage: React.FC = () => {
     spizarniaId,
     spizarniaNazwa,
     isFormValid,
+    scannerOpen,
+    setScannerOpen,
     handleInputChange,
     handleBarcodeData,
     handleSubmit,
@@ -39,6 +41,8 @@ const AddProductPage: React.FC = () => {
             error={error}
             onChange={handleInputChange}
             onBarcodeData={handleBarcodeData}
+            scannerOpen={scannerOpen}
+            setScannerOpen={setScannerOpen}
             spizarniaNazwa={spizarniaNazwa}
             spizarniaId={spizarniaId || undefined}
           />
