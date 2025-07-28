@@ -49,7 +49,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         minHeight: '100vh',
         justifyContent: 'center',
         bgcolor: 'background.default',
-        px: 3,
+        px: 2,
+        py: 4,
+        width: '100%',
+        maxWidth: '100vw',
+        overflow: 'hidden',
       }}
     >
       <Box

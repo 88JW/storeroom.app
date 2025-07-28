@@ -14,9 +14,13 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({ onGetStarted }) => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100vh',
+        height: '100vh', // Dokładna wysokość viewport
+        width: '100vw',
+        maxWidth: '100vw',
         bgcolor: 'background.default',
         fontFamily: 'typography.fontFamily',
+        overflow: 'hidden',
+        position: 'relative',
       }}
     >
       {/* Main Content */}
@@ -29,10 +33,14 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({ onGetStarted }) => {
           justifyContent: 'center',
           alignItems: 'center',
           px: 3,
+          py: 2,
           textAlign: 'center',
+          width: '100%',
+          maxWidth: '100%',
+          minHeight: 0, // Pozwala na zmniejszenie gdy potrzeba
         }}
       >
-        <Box sx={{ maxWidth: 384, width: '100%' }}>
+        <Box sx={{ maxWidth: 400, width: '100%', px: 2 }}>
           {/* Hero Image */}
           <Box
             component="img"
@@ -42,8 +50,8 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({ onGetStarted }) => {
               width: '100%',
               height: 'auto',
               objectFit: 'contain',
-              maxHeight: '40vh',
-              mb: 4,
+              maxHeight: '30vh', // Zmniejszone z 35vh
+              mb: 2, // Zmniejszone z 3
             }}
           />
           
@@ -56,10 +64,11 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({ onGetStarted }) => {
               fontWeight: 'bold',
               color: 'text.primary',
               letterSpacing: '-0.025em',
-              mb: 2,
+              mb: 1.5, // Zmniejszone z 2
+              fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' }, // Zmniejszone rozmiary
             }}
           >
-            Lodówkomat
+            Storeroom
           </Typography>
           
           {/* Subtitle */}
@@ -68,33 +77,50 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({ onGetStarted }) => {
             paragraph
             sx={{
               color: 'text.secondary',
-              lineHeight: 1.5,
-              mb: 5,
+              lineHeight: 1.4, // Zmniejszone z 1.5
+              mb: 2, // Zmniejszone z 4
+              fontSize: { xs: '0.95rem', sm: '1rem' }, // Zmniejszone rozmiary
             }}
           >
-            Zarządzaj zawartością swojej lodówki i zamrażarki. Koniec z marnowaniem jedzenia!
+            Zarządzaj zawartością swojej spiżarni. Koniec z marnowaniem jedzenia!
           </Typography>
         </Box>
       </Box>
 
-      {/* Footer with CTA Button */}
-      <Box component="footer" sx={{ width: '100%', px: 3, pb: 8, pt: 4 }}>
-        <Button
-          variant="contained"
-          component={Link}
-          to="/logowanie"
-          onClick={onGetStarted}
-          sx={{
-            width: '100%',
-            height: 56,
-            fontSize: '1.125rem',
-            fontWeight: 'bold',
-            borderRadius: 2,
-            textTransform: 'none',
-          }}
-        >
-          Rozpocznij
-        </Button>
+      {/* Footer with CTA Button - Fixed position */}
+      <Box 
+        component="footer" 
+        sx={{ 
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          width: '100%', 
+          px: 3, 
+          pb: { xs: 3, sm: 4 }, // Zmniejszone z 4,6
+          pt: 2,
+          maxWidth: '100%',
+          bgcolor: 'background.default', // Upewnij się że ma tło
+        }}
+      >
+        <Box sx={{ maxWidth: 400, mx: 'auto', width: '100%' }}>
+          <Button
+            variant="contained"
+            component={Link}
+            to="/logowanie"
+            onClick={onGetStarted}
+            sx={{
+              width: '100%',
+              height: 48, // Zmniejszone z 56
+              fontSize: '1rem', // Zmniejszone z 1.125rem
+              fontWeight: 'bold',
+              borderRadius: 2,
+              textTransform: 'none',
+            }}
+          >
+            Rozpocznij
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

@@ -9,9 +9,11 @@ const WelcomePageNew: React.FC = () => {
   };
 
   return (
-    <ThemeProvider theme={appTheme}>
-      <WelcomeHero onGetStarted={handleGetStarted} />
-    </ThemeProvider>
+    <div className="welcome-page">
+      <ThemeProvider theme={appTheme}>
+        <WelcomeHero onGetStarted={handleGetStarted} />
+      </ThemeProvider>
+    </div>
   );
 };
 
