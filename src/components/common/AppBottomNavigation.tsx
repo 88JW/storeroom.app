@@ -5,9 +5,9 @@ import {
   Paper
 } from '@mui/material';
 import {
-  Add,
   Home,
   List,
+  Settings,
   Logout
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -38,9 +38,8 @@ export const AppBottomNavigation: React.FC<AppBottomNavigationProps> = ({
   // Auto-detect current page based on location
   const getCurrentValue = () => {
     if (location.pathname.includes('/spiżarnie')) return 0;
-    if (location.pathname.includes('/dodaj-produkt')) return 1;
-    if (location.pathname.includes('/lista')) return 2;
-    if (location.pathname.includes('/ustawienia')) return 3;
+    if (location.pathname.includes('/lista')) return 1;
+    if (location.pathname.includes('/ustawienia')) return 2;
     return value;
   };
 
@@ -60,17 +59,12 @@ export const AppBottomNavigation: React.FC<AppBottomNavigationProps> = ({
         sx={{ bgcolor: '#f9f9f9' }}
       >
         <BottomNavigationAction 
-          label="Spiżarnie" 
+          label="Dom" 
           icon={<Home />} 
           onClick={() => navigate('/spiżarnie')}
           sx={{ 
             color: location.pathname.includes('/spiżarnie') ? '#1993e5' : 'text.secondary' 
           }}
-        />
-        <BottomNavigationAction 
-          label="Dodaj" 
-          icon={<Add />} 
-          onClick={() => navigate('/dodaj-produkt')}
         />
         <BottomNavigationAction 
           label="Lista" 
@@ -81,7 +75,15 @@ export const AppBottomNavigation: React.FC<AppBottomNavigationProps> = ({
           }}
         />
         <BottomNavigationAction 
-          label="Wyloguj" 
+          label="Ustawienia" 
+          icon={<Settings />} 
+          onClick={() => navigate('/ustawienia')}
+          sx={{ 
+            color: location.pathname.includes('/ustawienia') ? '#1993e5' : 'text.secondary' 
+          }}
+        />
+        <BottomNavigationAction 
+          label="Wyjście" 
           icon={<Logout />} 
           onClick={handleLogout}
         />

@@ -13,6 +13,7 @@ import AddProductPage from './pages/AddProductPage';
 import EditProductPage from './pages/EditProductPage';
 import CreateSpizarniaPage from './pages/CreateSpizarniaPage';
 import ManageLokalizacjePage from './pages/ManageLokalizacjePage';
+import SettingsPage from './pages/SettingsPage';
 
 // 📱 PWA Initialization
 console.log('🚀 Storeroom App starting...');
@@ -86,6 +87,14 @@ createRoot(document.getElementById('root')!).render(
             element={
               <ProtectedRoute>
                 <ManageLokalizacjePage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/ustawienia" 
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
               </ProtectedRoute>
             } 
           />
