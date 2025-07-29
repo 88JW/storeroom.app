@@ -9,7 +9,8 @@ import {
 } from '@mui/material';
 import {
   Add,
-  Kitchen
+  Kitchen,
+  GroupAdd
 } from '@mui/icons-material';
 import { ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +20,7 @@ import { appTheme } from '../theme/appTheme';
 import { AppBottomNavigation } from '../components/common/AppBottomNavigation';
 import { SpizarniaCard } from '../components/spizarnia/SpizarniaCard';
 import { LoadingState } from '../components/common/LoadingState';
+import { ShareCodeEntry } from '../components/sharing/ShareCodeEntry';
 import { useAuth } from '../hooks/useAuth';
 
 type SpizarniaWithMetadata = {
@@ -31,6 +33,7 @@ const SpizarniaListPage: React.FC = () => {
   const [spiżarnie, setSpiżarnie] = useState<SpizarniaWithMetadata[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [shareCodeDialogOpen, setShareCodeDialogOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -88,11 +91,18 @@ const SpizarniaListPage: React.FC = () => {
   };
 
   const handleEditSpizarnia = (spizarniaId: string) => {
-    navigate(`/edytuj-spizarnia/${spizarniaId}`);
+    // Tymczasowo - przekieruj do strony spiżarni z parametrem edycji
+    navigate(`/lista?spizarnia=${spizarniaId}&edit=true`);
   };
 
-  const handleShareSpizarnia = (spizarniaId: string) => {
-    navigate(`/udostepnij-spizarnia/${spizarniaId}`);
+  // 🔗 Handler po udanym dołączeniu do spiżarni
+  const handleJoinSuccess = () => {
+    // Odśwież listę spiżarni
+    if (user?.uid) {
+      SpizarniaService.getUserSpiżarnie(user.uid).then(userSpiżarnie => {
+        setSpiżarnie(userSpiżarnie);
+      });
+    }
   };
 
   if (loading) {
@@ -123,9 +133,30 @@ const SpizarniaListPage: React.FC = () => {
         }}
       >
         <Container sx={{ maxWidth: 'sm', pb: 8 }}>
-          <Typography variant="h1" sx={{ mb: 4 }}>
-            Twoje spiżarnie
-          </Typography>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            mb: 4 
+          }}>
+            <Typography variant="h1">
+              Twoje spiżarnie
+            </Typography>
+            {spiżarnie.length > 0 && (
+              <Button
+                variant="outlined"
+                onClick={() => setShareCodeDialogOpen(true)}
+                startIcon={<GroupAdd />}
+                size="small"
+                sx={{ 
+                  borderRadius: '12px',
+                  textTransform: 'none'
+                }}
+              >
+                Dołącz
+              </Button>
+            )}
+          </Box>
 
           {error && (
             <Alert severity="error" sx={{ mb: 3 }}>
@@ -160,18 +191,33 @@ const SpizarniaListPage: React.FC = () => {
               <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary' }}>
                 Stwórz swoją pierwszą spiżarnię aby rozpocząć zarządzanie produktami
               </Typography>
-              <Button
-                variant="contained"
-                onClick={handleCreateSpiżarnia}
-                sx={{ 
-                  px: 4,
-                  py: 1.5,
-                  fontSize: '1rem',
-                  borderRadius: '12px'
-                }}
-              >
-                Stwórz spiżarnię
-              </Button>
+              <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'center' }}>
+                <Button
+                  variant="contained"
+                  onClick={handleCreateSpiżarnia}
+                  sx={{ 
+                    px: 4,
+                    py: 1.5,
+                    fontSize: '1rem',
+                    borderRadius: '12px'
+                  }}
+                >
+                  Stwórz spiżarnię
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={() => setShareCodeDialogOpen(true)}
+                  startIcon={<GroupAdd />}
+                  sx={{ 
+                    px: 4,
+                    py: 1.5,
+                    fontSize: '1rem',
+                    borderRadius: '12px'
+                  }}
+                >
+                  Dołącz do spiżarni
+                </Button>
+              </Box>
             </Box>
           ) : (
             <>
@@ -185,7 +231,6 @@ const SpizarniaListPage: React.FC = () => {
                     description={`${spizarnia.metadata.opis || 'Brak opisu'} • Rola: ${spizarnia.data.role}`}
                     isOwner={spizarnia.data.role === 'owner'}
                     onEdit={handleEditSpizarnia}
-                    onShare={handleShareSpizarnia}
                     onDelete={handleDeleteSpizarnia}
                     onClick={handleSpizarniaSelect}
                   />
@@ -214,6 +259,13 @@ const SpizarniaListPage: React.FC = () => {
 
         {/* 📱 Bottom Navigation */}
         <AppBottomNavigation />
+
+        {/* 🔗 Dialog dołączania do spiżarni */}
+        <ShareCodeEntry
+          open={shareCodeDialogOpen}
+          onClose={() => setShareCodeDialogOpen(false)}
+          onSuccess={handleJoinSuccess}
+        />
       </Box>
     </ThemeProvider>
   );

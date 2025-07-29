@@ -164,13 +164,11 @@ const SettingsPage: React.FC = () => {
                 <ListItemIcon><InfoIcon /></ListItemIcon>
                 <ListItemText 
                   primary="Środowisko"
-                  secondary={
-                    <Chip 
-                      label={APP_VERSION.environment} 
-                      size="small" 
-                      color={APP_VERSION.environment === 'production' ? 'success' : 'warning'}
-                    />
-                  }
+                />
+                <Chip 
+                  label={APP_VERSION.environment} 
+                  size="small" 
+                  color={APP_VERSION.environment === 'production' ? 'success' : 'warning'}
                 />
               </ListItem>
             </List>

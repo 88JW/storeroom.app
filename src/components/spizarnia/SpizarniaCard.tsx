@@ -22,6 +22,7 @@ import {
   Edit,
   Delete
 } from '@mui/icons-material';
+import { ShareCodeManager } from '../sharing/ShareCodeManager';
 
 interface SpizarniaCardProps {
   id: string;
@@ -29,7 +30,6 @@ interface SpizarniaCardProps {
   description?: string;
   isOwner?: boolean;
   onEdit: (id: string) => void;
-  onShare: (id: string) => void;
   onDelete: (id: string) => void;
   onClick?: (id: string) => void;
 }
@@ -40,12 +40,12 @@ export const SpizarniaCard: React.FC<SpizarniaCardProps> = ({
   description,
   isOwner = true,
   onEdit,
-  onShare,
   onDelete,
   onClick
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const open = Boolean(anchorEl);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -64,7 +64,7 @@ export const SpizarniaCard: React.FC<SpizarniaCardProps> = ({
 
   const handleShare = () => {
     handleMenuClose();
-    onShare(id);
+    setShareDialogOpen(true);
   };
 
   const handleDeleteClick = () => {
@@ -153,12 +153,14 @@ export const SpizarniaCard: React.FC<SpizarniaCardProps> = ({
           <ListItemText>Edytuj</ListItemText>
         </MenuItem>
         
-        <MenuItem onClick={handleShare}>
-          <ListItemIcon>
-            <Share fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Udostępnij</ListItemText>
-        </MenuItem>
+        {isOwner && (
+          <MenuItem onClick={handleShare}>
+            <ListItemIcon>
+              <Share fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Udostępnij</ListItemText>
+          </MenuItem>
+        )}
         
         {isOwner && (
           <MenuItem 
@@ -204,6 +206,13 @@ export const SpizarniaCard: React.FC<SpizarniaCardProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
+
+      <ShareCodeManager
+        spizarniaId={id}
+        spizarniaNazwa={nazwa}
+        open={shareDialogOpen}
+        onClose={() => setShareDialogOpen(false)}
+      />
     </>
   );
 };

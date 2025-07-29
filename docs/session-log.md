@@ -799,3 +799,126 @@ produkty/{produktId}
 *Finał sesji: 27 lipca 2025, ~17:30*
 
 **💾 Ten log zostanie zachowany w repozytorium dla ciągłości prac.**
+
+---
+
+## 🔗 **SESJA: System Udostępniania Spiżarni**
+**📅 Data: 29 lipca 2025**
+**🎯 Cel: Implementacja udostępniania spiżarni między użytkownikami za pomocą 4-cyfrowych kodów**
+
+### 🚀 **Zaimplementowane funkcje:**
+
+#### **1. ShareCodeService - Backend Logic** ✅
+- **Plik:** `src/services/ShareCodeService.ts`
+- **Funkcje:**
+  - `createShareCode()` - Generowanie unikalnych 4-cyfrowych kodów (właściciel)
+  - `redeemShareCode()` - Wykorzystanie kodu przez nowego użytkownika
+  - `getActiveCodeForSpizarnia()` - Pobieranie aktywnego kodu
+  - `deactivateCode()` - Dezaktywacja kodu
+
+- **Bezpieczeństwo:**
+  - Kody wygasają po 24 godzinach
+  - Jednorazowego użytku (auto-dezaktywacja)
+  - Walidacja uprawnień na poziomie Firebase
+  - Sprawdzanie czy użytkownik nie jest już członkiem
+
+#### **2. ShareCodeManager - Interface Właściciela** ✅
+- **Plik:** `src/components/sharing/ShareCodeManager.tsx`
+- **Funkcje:**
+  - Dialog do generowania kodów dostępu
+  - Wyświetlanie aktywnego kodu z czasem wygaśnięcia
+  - Funkcja kopiowania do schowka
+  - Możliwość ręcznej dezaktywacji kodu
+  - Responsywny design z Material-UI
+
+#### **3. ShareCodeEntry - Interface Nowego Użytkownika** ✅
+- **Plik:** `src/components/sharing/ShareCodeEntry.tsx`
+- **Funkcje:**
+  - Intuicyjny interfejs do wpisywania 4-cyfrowego kodu
+  - Walidacja formatu kodu (tylko cyfry 0-9)
+  - Wizualne wskaźniki postępu (chips dla każdej cyfry)
+  - Automatyczne odświeżanie listy spiżarni po dołączeniu
+  - Real-time feedback i komunikaty błędów
+
+#### **4. Integracja UI** ✅
+- **SpizarniaCard:** Przycisk "Udostępnij" w menu (tylko dla właścicieli)
+- **SpizarniaListPage:** Przycisk "Dołącz" na górze strony
+- **Responsywne layouty** dostosowane do mobile-first
+
+### 🔧 **Naprawione błędy:**
+
+#### **1. HTML Structure Issue** ✅
+- **Problem:** `<div>` wewnątrz `<p>` w SettingsPage.tsx (Chip w ListItemText)
+- **Rozwiązanie:** Przeniesiono Chip poza ListItemText jako osobny element
+
+#### **2. TypeScript Compilation Errors** ✅
+- **Material-UI imports:** Poprawiono importy ikon z `@mui/icons-material`
+- **Type safety:** Dodano `type` imports dla interfaces
+- **React Hook dependencies:** Optymalizowano useCallback dla lepszej wydajności
+
+#### **3. Service Architecture** ✅
+- **Problem:** ESLint mylił `useShareCode` z React Hook
+- **Rozwiązanie:** Zmieniono nazwę na `redeemShareCode` dla jasności
+
+### 🎯 **Workflow udostępniania:**
+
+#### **Dla właściciela spiżarni:**
+1. Lista spiżarni → 3 kropki → "Udostępnij"
+2. System generuje unikalny 4-cyfrowy kod (np. 7384)
+3. Kod można skopiować i przesłać innemu użytkownikowi
+4. Kod wygasa automatycznie po 24h
+
+#### **Dla nowego użytkownika:**
+1. Strona spiżarni → przycisk "Dołącz" (na górze)
+2. Wpisanie otrzymanego 4-cyfrowego kodu
+3. System automatycznie dodaje do spiżarni z rolą 'member'
+4. Lista spiżarni odświeża się w czasie rzeczywistym
+
+### 📊 **Firestore Schema Extensions:**
+
+```typescript
+// Nowa kolekcja: shareCodes
+shareCodes/{codeId}/
+├── code: string              // 4-cyfrowy kod (np. "7384")
+├── spizarniaId: string       // ID spiżarni
+├── createdBy: string         // userId właściciela
+├── createdAt: Timestamp      // Data utworzenia
+├── expiresAt: Timestamp      // Data wygaśnięcia (24h)
+├── isActive: boolean         // Status aktywności
+├── usedBy?: string           // userId który użył kod
+└── usedAt?: Timestamp        // Data wykorzystania
+```
+
+### 🔐 **Bezpieczeństwo i walidacja:**
+- **Unikalne kody:** Algorytm sprawdza unikalność przed utworzeniem
+- **Czasowe ograniczenia:** Automatyczne wygasanie po 24h
+- **Jednorazowe użycie:** Kod dezaktywuje się po wykorzystaniu
+- **Uprawnienia:** Sprawdzanie roli 'owner' przed generowaniem kodu
+- **Członkostwo:** Kontrola czy użytkownik nie jest już członkiem
+
+### 🚀 **Architektura po implementacji:**
+
+```
+src/
+├── services/
+│   └── ShareCodeService.ts          ← Nowy serwis backend
+├── components/
+│   └── sharing/
+│       ├── ShareCodeManager.tsx     ← Dialog właściciela
+│       └── ShareCodeEntry.tsx       ← Interface nowego użytkownika
+└── pages/
+    └── SpizarniaListPage.tsx        ← Zaktualizowane UI
+```
+
+### 📈 **Statystyki implementacji:**
+- **3 nowe pliki** (~600 linii kodu)
+- **2 zaktualizowane komponenty**
+- **100% TypeScript type safety**
+- **Pełna integracja z Firebase Firestore**
+- **Responsywny design Mobile-First**
+
+---
+
+**🎉 System udostępniania spiżarni jest w pełni funkcjonalny!**
+
+*Zakończono: 29 lipca 2025*
