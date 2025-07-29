@@ -16,7 +16,7 @@ import { MoreVert, LocationOn } from '@mui/icons-material';
 import { ProduktService } from '../services/ProduktService';
 import { SpizarniaService } from '../services/SpizarniaService';
 import type { Produkt, SpizarniaMetadata } from '../types';
-import { appTheme } from '../theme/appTheme';
+import { appTheme, designTokens } from '../theme/appTheme';
 import { AppBottomNavigation } from '../components/common/AppBottomNavigation';
 import { LoadingState } from '../components/common/LoadingState';
 import { ProductCard } from '../components/spizarnia/ProductCard';
@@ -237,7 +237,7 @@ const ProductListPage: React.FC = () => {
 
           {filteredProdukty.length === 0 ? (
             <Box sx={{ textAlign: 'center', mt: 4 }}>
-              <Typography variant="body2" sx={{ color: '#637488' }}>
+              <Typography variant="body2" sx={{ color: designTokens.colors.text.secondary }}>
                 {produkty.length === 0 
                   ? 'Brak produktów w spiżarni. Dodaj pierwszy produkt!' 
                   : 'Nie znaleziono produktów spełniających kryteria.'

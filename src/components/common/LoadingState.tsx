@@ -6,6 +6,7 @@ import {
   Skeleton,
   Stack
 } from '@mui/material';
+import { designTokens } from '../../theme/appTheme';
 
 interface LoadingStateProps {
   type?: 'spinner' | 'skeleton' | 'cards';
@@ -30,7 +31,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
       >
         <CircularProgress 
           size={40}
-          sx={{ color: '#1993e5' }}
+          sx={{ color: designTokens.colors.primary.main }}
         />
         <Typography 
           variant="body2" 

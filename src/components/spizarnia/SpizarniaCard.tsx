@@ -23,6 +23,7 @@ import {
   Delete
 } from '@mui/icons-material';
 import { ShareCodeManager } from '../sharing/ShareCodeManager';
+import { styleUtils, designTokens } from '../../theme/appTheme';
 
 interface SpizarniaCardProps {
   id: string;
@@ -108,7 +109,7 @@ export const SpizarniaCard: React.FC<SpizarniaCardProps> = ({
                 variant="h6" 
                 sx={{ 
                   fontWeight: 600,
-                  color: '#1993e5',
+                  color: designTokens.colors.primary.main,
                   mb: description ? 1 : 0
                 }}
               >

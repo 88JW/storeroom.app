@@ -8,6 +8,7 @@ import {
   IconButton
 } from '@mui/material';
 import { Kitchen, Edit } from '@mui/icons-material';
+import { styleUtils, designTokens } from '../../theme/appTheme';
 import type { Produkt } from '../../types';
 
 interface ProductCardProps {
@@ -27,17 +28,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     color: string; 
     text: string 
   } => {
-    if (!dataWażności) return { days: 999, color: '#10b981', text: 'Brak daty' };
+    if (!dataWażności) return { 
+      days: 999, 
+      color: designTokens.colors.expiry.fresh, 
+      text: 'Brak daty' 
+    };
 
     const today = new Date();
     const expiryDate = 'toDate' in dataWażności ? dataWażności.toDate() : dataWażności;
     const diffTime = expiryDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays < 0) return { days: diffDays, color: '#ef4444', text: 'Przeterminowane' };
-    if (diffDays <= 2) return { days: diffDays, color: '#ef4444', text: `${diffDays} dni` };
-    if (diffDays <= 7) return { days: diffDays, color: '#f97316', text: `${diffDays} dni` };
-    return { days: diffDays, color: '#10b981', text: `${diffDays} dni` };
+    return {
+      days: diffDays,
+      color: styleUtils.getExpiryColor(diffDays),
+      text: diffDays < 0 ? 'Przeterminowane' : `${diffDays} dni`
+    };
   };
 
   const expiryInfo = getDaysUntilExpiry(produkt.dataWażności);
@@ -60,25 +66,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       onClick={handleClick}
       sx={{
         cursor: onClick ? 'pointer' : 'default',
-        transition: 'all 0.2s ease',
+        transition: `all ${designTokens.transitions.normal}`,
         '&:hover': {
           transform: onClick ? 'translateY(-1px)' : 'none',
-          boxShadow: onClick ? '0 4px 20px rgba(0,0,0,0.1)' : 'inherit'
+          boxShadow: onClick ? designTokens.shadows.cardHover : 'inherit'
         }
       }}
     >
       <CardContent sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        gap: 2, 
-        py: 2 
+        ...styleUtils.flexBetween,
+        gap: designTokens.spacing.md,
+        py: designTokens.spacing.md
       }}>
         {/* 🖼️ Obrazek produktu */}
         <Avatar
           sx={{ 
             width: 56, 
             height: 56, 
-            bgcolor: '#e0e7ff',
+            bgcolor: designTokens.colors.primary.light,
             fontSize: '1.5rem'
           }}
         >
@@ -104,7 +109,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             variant="subtitle1" 
             sx={{ 
               fontWeight: 600, 
-              color: '#111418',
+              color: designTokens.colors.text.primary,
               mb: 0.5
             }}
           >
@@ -112,7 +117,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           </Typography>
           <Typography 
             variant="body2" 
-            sx={{ color: '#637488' }}
+            sx={{ color: designTokens.colors.text.secondary }}
           >
             {produkt.ilość} {produkt.jednostka}
           </Typography>
@@ -123,7 +128,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <Typography 
             variant="caption" 
             sx={{ 
-              color: '#637488', 
+              color: designTokens.colors.text.secondary, 
               fontSize: '0.75rem',
               display: 'block',
               mb: 0.5
@@ -149,9 +154,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             size="small"
             sx={{ 
               ml: 1,
-              color: '#1993e5',
+              color: designTokens.colors.primary.main,
               '&:hover': {
-                bgcolor: 'rgba(25, 147, 229, 0.1)'
+                bgcolor: `rgba(25, 147, 229, 0.1)`
               }
             }}
           >

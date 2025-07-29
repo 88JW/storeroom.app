@@ -9,6 +9,7 @@ import {
 import {
   ArrowBack
 } from '@mui/icons-material';
+import { designTokens } from '../../theme/appTheme';
 
 interface EditProductHeaderProps {
   onGoBack: () => void;
@@ -38,7 +39,7 @@ export const EditProductHeader: React.FC<EditProductHeaderProps> = ({
         }}>
           <IconButton 
             onClick={onGoBack}
-            sx={{ color: '#1993e5' }}
+            sx={{ color: designTokens.colors.primary.main }}
           >
             <ArrowBack />
           </IconButton>
@@ -46,7 +47,7 @@ export const EditProductHeader: React.FC<EditProductHeaderProps> = ({
           <Typography 
             variant="h1" 
             sx={{ 
-              color: '#111418',
+              color: designTokens.colors.text.primary,
               fontWeight: 700,
               fontSize: '1.25rem'
             }}

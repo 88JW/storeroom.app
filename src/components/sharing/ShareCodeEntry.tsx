@@ -18,6 +18,7 @@ import {
   CheckCircleOutlined
 } from '@mui/icons-material';
 import { ShareCodeService } from '../../services/ShareCodeService';
+import { styleUtils } from '../../theme/appTheme';
 import { useAuth } from '../../hooks/useAuth';
 
 interface ShareCodeEntryProps {
@@ -114,7 +115,7 @@ export const ShareCodeEntry: React.FC<ShareCodeEntryProps> = ({
       PaperProps={{
         sx: {
           borderRadius: 3,
-          background: 'linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)'
+          background: styleUtils.gradients.card
         }
       }}
     >

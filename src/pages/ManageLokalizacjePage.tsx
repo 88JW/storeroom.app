@@ -39,23 +39,23 @@ import {
 } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { appTheme } from '../theme/appTheme';
+import { appTheme, designTokens } from '../theme/appTheme';
 import LokalizacjaService from '../services/LokalizacjaService';
 import type { SpizarniaLokalizacja } from '../types';
 import { LoadingState } from '../components/common/LoadingState';
 
-// 🎨 Dostępne ikony dla lokalizacji
+// 🎨 Dostępne ikony dla lokalizacji - używamy kolorów z design tokens
 const availableIcons = [
-  { value: '❄️', label: 'Lodówka', color: '#3B82F6' },
-  { value: '🧊', label: 'Zamrażarka', color: '#1E40AF' },
-  { value: '🗄️', label: 'Szafka', color: '#8B5CF6' },
-  { value: '🏠', label: 'Spiżarnia', color: '#F59E0B' },
-  { value: '🌿', label: 'Balkon', color: '#10B981' },
-  { value: '🥘', label: 'Kuchnia', color: '#EF4444' },
-  { value: '🍽️', label: 'Jadalnia', color: '#F97316' },
-  { value: '📦', label: 'Magazyn', color: '#6B7280' },
-  { value: '🧰', label: 'Piwnica', color: '#78716C' },
-  { value: '🏪', label: 'Garaż', color: '#0891B2' }
+  { value: '❄️', label: 'Lodówka', color: designTokens.colors.locations.lodowka },
+  { value: '🧊', label: 'Zamrażarka', color: designTokens.colors.locations.zamrazarka },
+  { value: '🗄️', label: 'Szafka', color: designTokens.colors.locations.szafka },
+  { value: '🏠', label: 'Spiżarnia', color: designTokens.colors.locations.spizarnia },
+  { value: '🌿', label: 'Balkon', color: designTokens.colors.locations.balkon },
+  { value: '🥘', label: 'Kuchnia', color: designTokens.colors.locations.kuchnia },
+  { value: '🍽️', label: 'Jadalnia', color: designTokens.colors.locations.jadalnia },
+  { value: '📦', label: 'Magazyn', color: designTokens.colors.locations.magazyn },
+  { value: '🧰', label: 'Piwnica', color: designTokens.colors.locations.piwnica },
+  { value: '🏪', label: 'Garaż', color: designTokens.colors.locations.garaz }
 ];
 
 // 📝 Interfejs formularza lokalizacji

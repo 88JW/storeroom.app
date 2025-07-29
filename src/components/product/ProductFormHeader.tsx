@@ -12,6 +12,7 @@ import {
   ArrowBack,
   QrCodeScanner
 } from '@mui/icons-material';
+import { designTokens } from '../../theme/appTheme';
 
 interface ProductFormHeaderProps {
   onGoBack: () => void;
@@ -41,7 +42,7 @@ export const ProductFormHeader: React.FC<ProductFormHeaderProps> = ({
         }}>
           <IconButton 
             onClick={onGoBack}
-            sx={{ color: '#1993e5' }}
+            sx={{ color: designTokens.colors.primary.main }}
           >
             <ArrowBack />
           </IconButton>
@@ -49,7 +50,7 @@ export const ProductFormHeader: React.FC<ProductFormHeaderProps> = ({
           <Typography 
             variant="h1" 
             sx={{ 
-              color: '#111418',
+              color: designTokens.colors.text.primary,
               fontWeight: 700,
               fontSize: '1.25rem'
             }}
@@ -69,11 +70,11 @@ export const ProductFormHeader: React.FC<ProductFormHeaderProps> = ({
           sx={{ 
             mb: 3,
             height: 48,
-            borderColor: '#e5e7eb',
-            color: '#637488',
+            borderColor: designTokens.colors.secondary.light,
+            color: designTokens.colors.text.secondary,
             '&:hover': {
-              borderColor: '#1993e5',
-              color: '#1993e5'
+              borderColor: designTokens.colors.primary.main,
+              color: designTokens.colors.primary.main
             }
           }}
         >
@@ -85,7 +86,7 @@ export const ProductFormHeader: React.FC<ProductFormHeaderProps> = ({
           display: 'flex', 
           alignItems: 'center', 
           mb: 3,
-          color: '#8e8e93'
+          color: designTokens.colors.text.disabled
         }}>
           <Divider sx={{ flexGrow: 1 }} />
           <Typography 

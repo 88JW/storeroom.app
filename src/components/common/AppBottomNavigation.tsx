@@ -14,6 +14,7 @@ import {
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useExpiryAlerts } from '../../hooks/useExpiryAlerts';
+import { designTokens } from '../../theme/appTheme';
 
 interface AppBottomNavigationProps {
   value?: number;
@@ -53,20 +54,20 @@ export const AppBottomNavigation: React.FC<AppBottomNavigationProps> = ({
         bottom: 0, 
         left: 0, 
         right: 0,
-        borderTop: '1px solid #e5e7eb'
+        borderTop: `1px solid ${designTokens.colors.secondary.light}`
       }}
     >
       <BottomNavigation
         value={getCurrentValue()}
         onChange={onChange}
-        sx={{ bgcolor: '#f9f9f9' }}
+        sx={{ bgcolor: designTokens.colors.background.default }}
       >
         <BottomNavigationAction 
           label="Home" 
           icon={<Home />} 
           onClick={() => navigate('/spiżarnie')}
           sx={{ 
-            color: (location.pathname.includes('/spiżarnie') || location.pathname === '/') ? '#1993e5' : 'text.secondary' 
+            color: (location.pathname.includes('/spiżarnie') || location.pathname === '/') ? designTokens.colors.primary.main : 'text.secondary' 
           }}
         />
         <BottomNavigationAction 
@@ -90,7 +91,7 @@ export const AppBottomNavigation: React.FC<AppBottomNavigationProps> = ({
           } 
           onClick={() => navigate('/alerty')}
           sx={{ 
-            color: location.pathname.includes('/alerty') ? '#1993e5' : 'text.secondary' 
+            color: location.pathname.includes('/alerty') ? designTokens.colors.primary.main : 'text.secondary' 
           }}
         />
         <BottomNavigationAction 
@@ -98,7 +99,7 @@ export const AppBottomNavigation: React.FC<AppBottomNavigationProps> = ({
           icon={<Settings />} 
           onClick={() => navigate('/ustawienia')}
           sx={{ 
-            color: location.pathname.includes('/ustawienia') ? '#1993e5' : 'text.secondary' 
+            color: location.pathname.includes('/ustawienia') ? designTokens.colors.primary.main : 'text.secondary' 
           }}
         />
         <BottomNavigationAction 

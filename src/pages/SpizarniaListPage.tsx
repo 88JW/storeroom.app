@@ -16,7 +16,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { SpizarniaService } from '../services/SpizarniaService';
 import type { SpizarniaMetadata, UserSpizarnia } from '../types';
-import { appTheme } from '../theme/appTheme';
+import { appTheme, designTokens } from '../theme/appTheme';
 import { AppBottomNavigation } from '../components/common/AppBottomNavigation';
 import { SpizarniaCard } from '../components/spizarnia/SpizarniaCard';
 import { LoadingState } from '../components/common/LoadingState';
@@ -178,7 +178,7 @@ const SpizarniaListPage: React.FC = () => {
                 mx: 'auto',
                 mb: 3,
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: designTokens.colors.background.gradient,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

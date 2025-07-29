@@ -30,6 +30,7 @@ import { ProduktService } from '../services/ProduktService';
 import type { Produkt } from '../types';
 import { AppBottomNavigation } from '../components/common/AppBottomNavigation';
 import { useNavigate } from 'react-router-dom';
+import { designTokens } from '../theme/appTheme';
 
 interface ProductWithLocation extends Produkt {
   spizarniaName: string;
@@ -152,7 +153,7 @@ const ExpiryAlertsPage: React.FC = () => {
           />
         ),
         priority: 'high',
-        color: '#ffebee'
+        color: designTokens.colors.expiry.backgrounds.expired
       };
     } else if (days === 0) {
       return {
@@ -165,7 +166,7 @@ const ExpiryAlertsPage: React.FC = () => {
           />
         ),
         priority: 'high',
-        color: '#fff3e0'
+        color: designTokens.colors.expiry.backgrounds.warning
       };
     } else if (days === 1) {
       return {
@@ -178,7 +179,7 @@ const ExpiryAlertsPage: React.FC = () => {
           />
         ),
         priority: 'medium',
-        color: '#fff3e0'
+        color: designTokens.colors.expiry.backgrounds.warning
       };
     } else {
       return {
@@ -191,7 +192,7 @@ const ExpiryAlertsPage: React.FC = () => {
           />
         ),
         priority: 'low',
-        color: '#fffde7'
+        color: designTokens.colors.expiry.backgrounds.soon
       };
     }
   };
@@ -248,7 +249,7 @@ const ExpiryAlertsPage: React.FC = () => {
       )}
 
       {/* Podsumowanie alertów */}
-      <Card sx={{ mb: 3, bgcolor: '#fff3cd', borderLeft: '4px solid #ffc107' }}>
+      <Card sx={{ mb: 3, bgcolor: designTokens.colors.expiry.backgrounds.soon, borderLeft: `4px solid ${designTokens.colors.status.warning}` }}>
         <CardContent>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Warning color="warning" />
@@ -334,7 +335,7 @@ const ExpiryAlertsPage: React.FC = () => {
                           onClick={() => handleEditProduct(produkt)}
                           sx={{ 
                             bgcolor: 'white',
-                            '&:hover': { bgcolor: '#f5f5f5' }
+                            '&:hover': { bgcolor: designTokens.colors.text.hover }
                           }}
                         >
                           <Edit />
