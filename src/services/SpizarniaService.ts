@@ -289,19 +289,52 @@ export class SpizarniaService {
   }
   
   // 📊 Pobieranie statystyk spiżarni
-  static async getSpizarniaStats() {
+  static async getSpizarniaStats(spizarniaId: string) {
     try {
-      // TODO: Implementacja statystyk
-      // - liczba produktów
-      // - produkty wygasające
-      // - ostatnia aktywność
-      // - wartość spiżarni
+      const produktyRef = collection(db, 'spiżarnie', spizarniaId, 'produkty');
+      const produktySnapshot = await getDocs(produktyRef);
+      
+      let totalProducts = 0;
+      let expiringProducts = 0; // wygasające w ciągu 7 dni
+      let overdueProducts = 0; // przeterminowane
+      let totalValue = 0;
+      
+      const today = new Date();
+      const sevenDaysFromNow = new Date();
+      sevenDaysFromNow.setDate(today.getDate() + 7);
+      
+      produktySnapshot.docs.forEach(doc => {
+        const data = doc.data();
+        totalProducts++;
+        
+        // Sprawdź datę ważności
+        if (data.dataWażności) {
+          const expiryDate = new Date(data.dataWażności);
+          
+          if (expiryDate < today) {
+            overdueProducts++;
+          } else if (expiryDate <= sevenDaysFromNow) {
+            expiringProducts++;
+          }
+        }
+        
+        // Szacuj wartość (jeśli mamy cenę)
+        if (data.cena && data.ilość) {
+          totalValue += (data.cena * data.ilość);
+        }
+      });
+      
+      // Pobierz informacje o spiżarni
+      const spizarniaDoc = await getDoc(doc(db, 'spiżarnie', spizarniaId));
+      const spizarniaData = spizarniaDoc.data();
       
       return {
-        totalProducts: 0,
-        expiringProducts: 0,
-        overdueProducts: 0,
-        totalValue: 0
+        totalProducts,
+        expiringProducts,
+        overdueProducts,
+        totalValue,
+        lastActivity: spizarniaData?.ostatniaAktywność?.toDate() || null,
+        createdAt: spizarniaData?.dataUtworzenia?.toDate() || null
       };
       
     } catch (error) {

@@ -2,16 +2,18 @@ import React from 'react';
 import {
   BottomNavigation,
   BottomNavigationAction,
-  Paper
+  Paper,
+  Badge
 } from '@mui/material';
 import {
   Home,
-  List,
+  Warning,
   Settings,
   Logout
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useExpiryAlerts } from '../../hooks/useExpiryAlerts';
 
 interface AppBottomNavigationProps {
   value?: number;
@@ -25,6 +27,7 @@ export const AppBottomNavigation: React.FC<AppBottomNavigationProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { signOut } = useAuth();
+  const alerts = useExpiryAlerts();
 
   const handleLogout = async () => {
     try {
@@ -38,7 +41,7 @@ export const AppBottomNavigation: React.FC<AppBottomNavigationProps> = ({
   // Auto-detect current page based on location
   const getCurrentValue = () => {
     if (location.pathname.includes('/spiżarnie')) return 0;
-    if (location.pathname.includes('/lista')) return 1;
+    if (location.pathname.includes('/alerty')) return 1;
     if (location.pathname.includes('/ustawienia')) return 2;
     return value;
   };
@@ -67,11 +70,27 @@ export const AppBottomNavigation: React.FC<AppBottomNavigationProps> = ({
           }}
         />
         <BottomNavigationAction 
-          label="Lista" 
-          icon={<List />} 
-          onClick={() => navigate('/lista')}
+          label="Alerty" 
+          icon={
+            <Badge 
+              badgeContent={alerts.total > 0 ? alerts.total : (alerts.loading ? '...' : undefined)} 
+              color="error"
+              sx={{
+                '& .MuiBadge-badge': {
+                  top: -5,
+                  right: -5,
+                  fontSize: '0.7rem',
+                  minWidth: '16px',
+                  height: '16px'
+                }
+              }}
+            >
+              <Warning />
+            </Badge>
+          } 
+          onClick={() => navigate('/alerty')}
           sx={{ 
-            color: location.pathname.includes('/lista') ? '#1993e5' : 'text.secondary' 
+            color: location.pathname.includes('/alerty') ? '#1993e5' : 'text.secondary' 
           }}
         />
         <BottomNavigationAction 

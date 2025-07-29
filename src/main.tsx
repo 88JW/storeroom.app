@@ -16,6 +16,7 @@ import ManageLokalizacjePage from './pages/ManageLokalizacjePage';
 import SettingsPage from './pages/SettingsPage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import ExpiryAlertsPage from './pages/ExpiryAlertsPage';
 
 // 📱 PWA Initialization
 console.log('🚀 Storeroom App starting...');
@@ -99,6 +100,14 @@ createRoot(document.getElementById('root')!).render(
             element={
               <ProtectedRoute>
                 <SettingsPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/alerty" 
+            element={
+              <ProtectedRoute>
+                <ExpiryAlertsPage />
               </ProtectedRoute>
             } 
           />

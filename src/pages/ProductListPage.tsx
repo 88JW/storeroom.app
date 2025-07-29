@@ -168,8 +168,10 @@ const ProductListPage: React.FC = () => {
   };
 
   const handleProductClick = (produkt: Produkt) => {
-    // TODO: Navigate to product details
-    console.log('Clicked product:', produkt);
+    // Navigate to product details
+    const spizarniaId = searchParams.get('spizarnia');
+    console.log('Navigating to product details:', produkt);
+    navigate(`/produkt/${produkt.id}?spizarnia=${spizarniaId}`);
   };
 
   const handleProductEdit = (produkt: Produkt) => {

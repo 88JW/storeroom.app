@@ -6,7 +6,12 @@ import {
   setDoc,
   updateDoc,
   serverTimestamp,
-  Timestamp
+  Timestamp,
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs
 } from 'firebase/firestore';
 import { 
   createUserWithEmailAndPassword,
@@ -192,17 +197,46 @@ export class UserService {
   }
   
   // 📊 Pobieranie podstawowych statystyk użytkownika
-  static async getUserStats() {
+  static async getUserStats(userId: string) {
     try {
-      // TODO: Implementacja statystyk użytkownika
-      // - liczba spiżarni
-      // - liczba produktów
-      // - ostatnia aktywność
+      const db = getFirestore();
+      
+      // Pobierz liczbę spiżarni
+      const spizarnieRef = collection(db, 'spiżarnie');
+      const spizarnieQuery = query(spizarnieRef, where('userId', '==', userId));
+      const spizarnieSnapshot = await getDocs(spizarnieQuery);
+      const liczbaSpiżarni = spizarnieSnapshot.size;
+      
+      // Pobierz liczbę produktów ze wszystkich spiżarni
+      let liczbaProduktów = 0;
+      let najnowszaAktywność: Date | null = null;
+      
+      for (const spizarniaDoc of spizarnieSnapshot.docs) {
+        const produktyRef = collection(db, 'spiżarnie', spizarniaDoc.id, 'produkty');
+        const produktySnapshot = await getDocs(produktyRef);
+        liczbaProduktów += produktySnapshot.size;
+        
+        // Znajdź najnowszą aktywność
+        produktySnapshot.docs.forEach(produktDoc => {
+          const data = produktDoc.data();
+          if (data.dataUtworzenia && (!najnowszaAktywność || data.dataUtworzenia.toDate() > najnowszaAktywność)) {
+            najnowszaAktywność = data.dataUtworzenia.toDate();
+          }
+        });
+      }
+      
+      // Pobierz dane użytkownika
+      const userDoc = await getDoc(doc(db, 'users', userId));
+      const userData = userDoc.data();
       
       return {
-        totalSpizarnie: 0,
-        totalProducts: 0,
-        lastActivity: null
+        totalSpizarnie: liczbaSpiżarni,
+        totalProducts: liczbaProduktów,
+        lastActivity: najnowszaAktywność,
+        dataRejestracji: userData?.dataUtworzenia?.toDate() || null,
+        ostatnieLogowanie: userData?.ostatnieLogowanie?.toDate() || null,
+        email: userData?.email || '',
+        nazwaWyświetlana: userData?.nazwaWyświetlana || ''
       };
       
     } catch (error) {

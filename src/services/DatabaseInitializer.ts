@@ -7,7 +7,10 @@ import {
   addDoc,
   serverTimestamp,
   writeBatch,
-  Timestamp
+  Timestamp,
+  query,
+  where,
+  getDocs
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { 
@@ -241,13 +244,37 @@ export class DatabaseInitializer {
   }
   
   // 🧹 Czyszczenie bazy dla użytkownika (do testów)
-  static async clearUserDatabase(): Promise<void> {
+  static async clearUserDatabase(userId: string): Promise<void> {
     try {
       console.log('🧹 Czyszczenie bazy danych użytkownika...');
       
-      // TODO: Implementacja czyszczenia
-      // W produkcji powinna być Cloud Function
-      console.log('⚠️ Czyszczenie bazy nie jest jeszcze zaimplementowane');
+      // Usuń wszystkie spiżarnie użytkownika
+      const spizarnieRef = collection(db, 'spiżarnie');
+      const userSpizarnieQuery = query(spizarnieRef, where('userId', '==', userId));
+      const spizarnieSnapshot = await getDocs(userSpizarnieQuery);
+      
+      const batch = writeBatch(db);
+      
+      // Usuń wszystkie produkty z każdej spiżarni
+      for (const spizarniaDoc of spizarnieSnapshot.docs) {
+        const produktyRef = collection(db, 'spiżarnie', spizarniaDoc.id, 'produkty');
+        const produktySnapshot = await getDocs(produktyRef);
+        
+        produktySnapshot.docs.forEach(produktDoc => {
+          batch.delete(produktDoc.ref);
+        });
+        
+        // Usuń spiżarnię
+        batch.delete(spizarniaDoc.ref);
+      }
+      
+      // Usuń dane użytkownika
+      batch.delete(doc(db, 'users', userId));
+      
+      // Wykonaj wszystkie operacje
+      await batch.commit();
+      
+      console.log('✅ Baza danych użytkownika została wyczyszczona');
       
     } catch (error) {
       console.error('❌ Błąd czyszczenia bazy:', error);

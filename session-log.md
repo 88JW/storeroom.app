@@ -203,7 +203,208 @@ Welcome → Login → Register
 - ✅ **Bezpieczne zarządzanie** sesją użytkownika
 
 ### 🚀 **Stan po sesji:**
-**Aplikacja Storeroom v1.1.0** - kompletna PWA z pełnym systemem autentykacji, poprawionym UX/UI i intuicyjną nawigacją. Gotowa do wdrożenia produkcyjnego!
+**Aplikacja Storeroom v1.2.0** - kompletna PWA z systemem alertów o wygasających produktach! Teraz z inteligentnym systemem powiadomień i zarządzania terminami ważności.
+
+---
+
+## 📱 Session 10: Implementacja systemu alertów o wygasających produktach
+**Data:** 29 lipca 2025  
+**Czas:** ~2 godziny  
+**Status:** ✅ UKOŃCZONE - SYSTEM ALERTÓW DZIAŁAJĄCY
+
+### 🎯 **Cel sesji:**
+Dodanie nowej ikony wykrzyknika w dolnej nawigacji z systemem alertów o produktach kończących się lub przeterminowanych.
+
+### 🔧 **Zrealizowane zadania:**
+
+#### 1. **Nowa strona alertów** - `/alerty` ✅
+```typescript
+// ExpiryAlertsPage.tsx
+- ✅ Strona z trzema kategoriami alertów
+- ✅ Przeterminowane produkty (czerwone)
+- ✅ Wygasające 0-2 dni (pomarańczowe) 
+- ✅ Niedługo wygasające 3-7 dni (żółte)
+- ✅ Przegląd wszystkich produktów z wszystkich spiżarni
+- ✅ Zakładki z licznikami produktów
+- ✅ Nawigacja do edycji produktu
+- ✅ Floating button do odświeżania
+```
+
+#### 2. **Hook do zarządzania alertami** - `useExpiryAlerts` ✅
+```typescript
+// useExpiryAlerts.ts
+- ✅ Automatyczne ładowanie alertów
+- ✅ Categoryzacja produktów według dat ważności
+- ✅ Liczniki dla każdej kategorii alertów
+- ✅ Auto-refresh co 5 minut
+- ✅ Obsługa błędów i loading state
+```
+
+#### 3. **Nowa ikona w dolnej nawigacji** ✅
+```typescript
+// AppBottomNavigation.tsx
+- ✅ Ikona Warning z Badge pokazującą liczbę alertów
+- ✅ Auto-aktualizacja liczby alertów
+- ✅ Kolorowa sygnalizacja (czerwony badge)
+- ✅ Nawigacja do strony alertów /alerty
+- ✅ Responsive design i animacje
+```
+
+#### 4. **Routing i integracja** ✅
+```typescript
+// main.tsx
+- ✅ Nowa trasa /alerty z ProtectedRoute
+- ✅ Import ExpiryAlertsPage
+- ✅ Integracja z systemem nawigacji
+```
+
+#### 5. **Testowy system danych** ✅
+```typescript
+// TestDataService.ts
+- ✅ Automatyczne tworzenie produktów testowych
+- ✅ Produkty przeterminowane (2 sztuki)
+- ✅ Produkty wygasające 0-2 dni (3 sztuki)  
+- ✅ Produkty wygasające 3-7 dni (4 sztuki)
+- ✅ Funkcja czyszczenia testowych danych
+- ✅ Integracja z SettingsPage dla deweloperów
+```
+
+#### 6. **Rozszerzone ustawienia** ✅
+```typescript
+// SettingsPage.tsx
+- ✅ Sekcja deweloperska z funkcjami testowymi
+- ✅ Przycisk "Dodaj testowe produkty z alertami"
+- ✅ Przycisk "Usuń testowe produkty"
+- ✅ Feedback dla użytkownika (success/error alerts)
+- ✅ Loading states i disabled states
+```
+
+### 📊 **Nowe funkcje aplikacji:**
+
+| Funkcja | Status | Opis |
+|---------|--------|------|
+| **Alert Badge** | ✅ | Licznik alertów w dolnej nawigacji |
+| **Strona alertów** | ✅ | Przegląd wszystkich wygasających produktów |
+| **Kategoryzacja** | ✅ | 3 kategorie: przeterminowane, wygasające, niedługo |
+| **Auto-refresh** | ✅ | Odświeżanie alertów co 5 minut |
+| **Nawigacja do edycji** | ✅ | Bezpośrednia edycja z listy alertów |
+| **Testowe dane** | ✅ | System do testowania funkcjonalności |
+| **Responsywny design** | ✅ | Działanie na wszystkich urządzeniach |
+
+### 🎨 **UI/UX Usprawnienia:**
+- ✅ **Kolory semantyczne**: Czerwony (przeterminowane), pomarańczowy (wygasające), żółty (niedługo)
+- ✅ **Ikony informacyjne**: Warning, Error, Schedule dla lepszej czytelności
+- ✅ **Badge w nawigacji**: Dynamiczny licznik z kolorowym tłem
+- ✅ **Zakładki**: Intuicyjne przełączanie między kategoriami
+- ✅ **Loading states**: Spinner podczas ładowania danych
+- ✅ **Empty states**: Komunikaty gdy brak produktów w kategorii
+- ✅ **Floating button**: Szybkie odświeżanie danych
+
+### 🔧 **Usprawnienia techniczne:**
+- ✅ **TypeScript**: Pełne typowanie dla nowych komponentów
+- ✅ **Error handling**: Obsługa błędów we wszystkich serwisach
+- ✅ **Performance**: Optymalizacja zapytań do Firebase
+- ✅ **Code splitting**: Lazy loading dla nowych komponentów
+- ✅ **Accessibility**: Prawidłowe aria-labels i semantic HTML
+
+### 🚀 **Stan po sesji:**
+**Aplikacja Storeroom v1.2.0** zawiera teraz:
+- ✅ **Kompletny system alertów** o wygasających produktach
+- ✅ **Inteligentną nawigację** z dynamicznymi licznikami
+- ✅ **Zaawansowany UX** z kolorami semantycznymi
+- ✅ **Narzędzia testowe** dla deweloperów
+- ✅ **Auto-refresh** i real-time aktualizacje
+- ✅ **Cross-pantry view** - alerty ze wszystkich spiżarni
+
+**🎉 Aplikacja jest gotowa do testowania funkcjonalności alertów!**
+
+---
+
+## 📱 Session 9: Dokończenie TODO i implementacja brakujących funkcji
+**Data:** 29 lipca 2025  
+**Czas:** ~1 godzina  
+**Status:** ✅ UKOŃCZONE - IMPLEMENTACJA TODO I STATYSTYK
+
+### 🎯 **Cel sesji:**
+Dokończenie TODO z poprzedniej sesji i implementacja brakujących funkcji statystyk oraz nawigacji.
+
+### 🔧 **Zrealizowane zadania:**
+
+#### 1. **UserService.getUserStats() - Statystyki użytkownika** ✅
+```typescript
+static async getUserStats(userId: string) {
+  // Pobiera liczbę spiżarni, produktów, ostatnią aktywność
+  // Zwraca pełne statystyki użytkownika z Firebase
+}
+```
+**Implementowane funkcje:**
+- ✅ Liczba spiżarni użytkownika
+- ✅ Całkowita liczba produktów we wszystkich spiżarniach  
+- ✅ Najnowsza aktywność (ostatni dodany produkt)
+- ✅ Data rejestracji i ostatnie logowanie
+- ✅ Dane profilu użytkownika
+
+#### 2. **SpizarniaService.getSpizarniaStats() - Statystyki spiżarni** ✅
+```typescript
+static async getSpizarniaStats(spizarniaId: string) {
+  // Pobiera szczegółowe statystyki konkretnej spiżarni
+  // Analizuje daty ważności i wartość produktów
+}
+```
+**Implementowane funkcje:**
+- ✅ Liczba produktów w spiżarni
+- ✅ Produkty wygasające w ciągu 7 dni
+- ✅ Produkty przeterminowane
+- ✅ Szacunkowa wartość spiżarni (jeśli dostępne ceny)
+- ✅ Data utworzenia i ostatnia aktywność
+
+#### 3. **ProductListPage - Nawigacja do szczegółów produktu** ✅
+```typescript
+const handleProductClick = (produkt: Produkt) => {
+  navigate(`/produkt/${produkt.id}?spizarnia=${spizarniaId}`);
+};
+```
+**Zmiana:**
+- ✅ Usunięto TODO komentarz
+- ✅ Dodano rzeczywistą nawigację do strony szczegółów produktu
+- ✅ Przekazywanie ID spiżarni w URL
+
+#### 4. **DatabaseInitializer.clearUserDatabase() - Czyszczenie bazy** ✅
+```typescript
+static async clearUserDatabase(userId: string) {
+  // Komplentne usuwanie wszystkich danych użytkownika
+  // Batch operations dla wydajności
+}
+```
+**Implementowane funkcje:**
+- ✅ Usuwanie wszystkich produktów ze wszystkich spiżarni
+- ✅ Usuwanie wszystkich spiżarni użytkownika
+- ✅ Usuwanie profilu użytkownika
+- ✅ Batch operations dla atomowości operacji
+- ✅ Obsługa błędów i logging
+
+### 📊 **Podsumowanie zrealizowanych TODO:**
+
+| Serwis | Funkcja | Status | Opis |
+|--------|---------|--------|------|
+| **UserService** | `getUserStats()` | ✅ | Pełne statystyki użytkownika |
+| **SpizarniaService** | `getSpizarniaStats()` | ✅ | Analiza produktów i dat ważności |
+| **ProductListPage** | `handleProductClick()` | ✅ | Nawigacja do szczegółów |
+| **DatabaseInitializer** | `clearUserDatabase()` | ✅ | Bezpieczne czyszczenie bazy |
+| **EnhancedBarcodeService** | localStorage saving | ✅ | Już zaimplementowane |
+
+### 🔧 **Dodane importy i dependencies:**
+- ✅ **UserService**: `getFirestore`, `collection`, `query`, `where`, `getDocs`
+- ✅ **SpizarniaService**: używa istniejące `db` z Firebase
+- ✅ **DatabaseInitializer**: `query`, `where`, `getDocs` dla batch operations
+
+### 🚀 **Stan po sesji:**
+**Wszystkie główne TODO zostały zaimplementowane!** Aplikacja ma teraz:
+- ✅ **Kompletne statystyki** użytkowników i spiżarni
+- ✅ **Pełną nawigację** między stronami
+- ✅ **Narzędzia administracyjne** do zarządzania bazą
+- ✅ **Optymalizacje wydajności** (batch operations)
+- ✅ **Obsługę błędów** we wszystkich serwisach
 
 ---
 

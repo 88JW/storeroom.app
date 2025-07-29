@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -10,7 +10,9 @@ import {
   ListItemIcon,
   ListItemText,
   Chip,
-  Button
+  Button,
+  Alert,
+  CircularProgress
 } from '@mui/material';
 import {
   Person as PersonIcon,
@@ -18,18 +20,28 @@ import {
   Info as InfoIcon,
   ExitToApp as LogoutIcon,
   Smartphone as PhoneIcon,
-  ArrowBack as ArrowBackIcon
+  ArrowBack as ArrowBackIcon,
+  BugReport as BugReportIcon,
+  Science as ScienceIcon,
+  Delete as DeleteIcon
 } from '@mui/icons-material';
 import { useAuth } from '../hooks/useAuth';
 import { APP_VERSION, getAppInfo } from '../config/version';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { TestDataService } from '../services/TestDataService';
+import { SpizarniaService } from '../services/SpizarniaService';
 
 const SettingsPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const appInfo = getAppInfo();
+  
+  // Stan dla funkcji testowych
+  const [testLoading, setTestLoading] = useState(false);
+  const [testMessage, setTestMessage] = useState<string | null>(null);
+  const [testError, setTestError] = useState<string | null>(null);
 
   const handleLogout = async () => {
     try {
@@ -37,6 +49,66 @@ const SettingsPage: React.FC = () => {
       navigate('/welcome');
     } catch (error) {
       console.error('Błąd wylogowania:', error);
+    }
+  };
+
+  // Funkcja dodawania testowych produktów
+  const handleAddTestData = async () => {
+    if (!user?.uid) return;
+
+    try {
+      setTestLoading(true);
+      setTestError(null);
+      setTestMessage(null);
+
+      // Pobierz pierwszą spiżarnię użytkownika
+      const spiżarnie = await SpizarniaService.getUserSpiżarnie(user.uid);
+      
+      if (spiżarnie.length === 0) {
+        setTestError('Nie masz żadnej spiżarni. Utwórz najpierw spiżarnię.');
+        return;
+      }
+
+      const firstSpizarnia = spiżarnie[0];
+      const result = await TestDataService.createTestExpiryProducts(firstSpizarnia.id, user.uid);
+      
+      setTestMessage(`✅ Dodano ${result.total} testowych produktów! (${result.expired} przeterminowanych, ${result.expiring} wygasających, ${result.soonExpiring} niedługo wygasających)`);
+      
+    } catch (error) {
+      console.error('Błąd dodawania testowych danych:', error);
+      setTestError('Nie udało się dodać testowych produktów');
+    } finally {
+      setTestLoading(false);
+    }
+  };
+
+  // Funkcja usuwania testowych produktów
+  const handleClearTestData = async () => {
+    if (!user?.uid) return;
+
+    try {
+      setTestLoading(true);
+      setTestError(null);
+      setTestMessage(null);
+
+      // Pobierz pierwszą spiżarnię użytkownika
+      const spiżarnie = await SpizarniaService.getUserSpiżarnie(user.uid);
+      
+      if (spiżarnie.length === 0) {
+        setTestError('Nie masz żadnej spiżarni.');
+        return;
+      }
+
+      const firstSpizarnia = spiżarnie[0];
+      const deletedCount = await TestDataService.clearTestData(firstSpizarnia.id, user.uid);
+      
+      setTestMessage(`🗑️ Usunięto ${deletedCount} testowych produktów!`);
+      
+    } catch (error) {
+      console.error('Błąd usuwania testowych danych:', error);
+      setTestError('Nie udało się usunąć testowych produktów');
+    } finally {
+      setTestLoading(false);
     }
   };
 
@@ -192,6 +264,57 @@ const SettingsPage: React.FC = () => {
             </List>
           </CardContent>
         </Card>
+
+        {/* Funkcje testowe (tylko w development) */}
+        {APP_VERSION.environment === 'development' && (
+          <Card sx={{ mb: 3 }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                <BugReportIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+                Funkcje testowe
+              </Typography>
+              
+              {testMessage && (
+                <Alert severity="success" sx={{ mb: 2 }} onClose={() => setTestMessage(null)}>
+                  {testMessage}
+                </Alert>
+              )}
+              
+              {testError && (
+                <Alert severity="error" sx={{ mb: 2 }} onClose={() => setTestError(null)}>
+                  {testError}
+                </Alert>
+              )}
+              
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Narzędzia deweloperskie do testowania funkcji alertów
+              </Typography>
+              
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={testLoading ? <CircularProgress size={16} /> : <ScienceIcon />}
+                  onClick={handleAddTestData}
+                  disabled={testLoading}
+                  color="warning"
+                >
+                  Dodaj testowe produkty z alertami
+                </Button>
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  startIcon={testLoading ? <CircularProgress size={16} /> : <DeleteIcon />}
+                  onClick={handleClearTestData}
+                  disabled={testLoading}
+                  color="error"
+                >
+                  Usuń testowe produkty
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Akcje */}
         <Card>
