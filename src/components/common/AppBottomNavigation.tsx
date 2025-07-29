@@ -40,7 +40,7 @@ export const AppBottomNavigation: React.FC<AppBottomNavigationProps> = ({
 
   // Auto-detect current page based on location
   const getCurrentValue = () => {
-    if (location.pathname.includes('/spiżarnie')) return 0;
+    if (location.pathname.includes('/spiżarnie') || location.pathname === '/') return 0;
     if (location.pathname.includes('/alerty')) return 1;
     if (location.pathname.includes('/ustawienia')) return 2;
     return value;
@@ -62,11 +62,11 @@ export const AppBottomNavigation: React.FC<AppBottomNavigationProps> = ({
         sx={{ bgcolor: '#f9f9f9' }}
       >
         <BottomNavigationAction 
-          label="Dom" 
+          label="Home" 
           icon={<Home />} 
           onClick={() => navigate('/spiżarnie')}
           sx={{ 
-            color: location.pathname.includes('/spiżarnie') ? '#1993e5' : 'text.secondary' 
+            color: (location.pathname.includes('/spiżarnie') || location.pathname === '/') ? '#1993e5' : 'text.secondary' 
           }}
         />
         <BottomNavigationAction 

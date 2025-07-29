@@ -921,4 +921,19 @@ src/
 
 **🎉 System udostępniania spiżarni jest w pełni funkcjonalny!**
 
+### 🔧 **Poprawki UI/UX:**
+
+#### **5. Naprawienie paska nawigacji** ✅
+- **Problem:** W AppBottomNavigation.tsx wyświetlała się ikona "Lista" zamiast właściwej
+- **Przyczyna:** Nieistniejący import `<Home />` powodował fallback do ikony List
+- **Rozwiązanie:** Usunięto przycisk "Dom" z nawigacji dolnej
+- **Rezultat:** Pasek zawiera teraz tylko 3 przyciski: Alerty, Ustawienia, Wyjście
+
+#### **6. Przywrócenie przycisku Home** ✅
+- **Żądanie użytkownika:** "przywróć home"
+- **Implementacja:** Dodano przycisk "Home" jako pierwszy element nawigacji
+- **Funkcjonalność:** Przekierowanie do `/spiżarnie` (lista spiżarni użytkownika)
+- **Rezultat:** Pasek zawiera teraz 4 przyciski: Home, Alerty, Ustawienia, Wyjście
+- **Auto-detection:** Przycisk Home jest aktywny na stronie `/spiżarnie` i root `/`
+
 *Zakończono: 29 lipca 2025*
