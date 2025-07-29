@@ -11,6 +11,7 @@ import ProductListPage from './pages/ProductListPage';
 import SpizarniaListPage from './pages/SpizarniaListPage';
 import AddProductPage from './pages/AddProductPage';
 import EditProductPage from './pages/EditProductPage';
+import ProductDetailsPage from './pages/ProductDetailsPage';
 import CreateSpizarniaPage from './pages/CreateSpizarniaPage';
 import ManageLokalizacjePage from './pages/ManageLokalizacjePage';
 import SettingsPage from './pages/SettingsPage';
@@ -76,6 +77,14 @@ createRoot(document.getElementById('root')!).render(
             element={
               <ProtectedRoute>
                 <EditProductPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/produkt/:id" 
+            element={
+              <ProtectedRoute>
+                <ProductDetailsPage />
               </ProtectedRoute>
             } 
           />

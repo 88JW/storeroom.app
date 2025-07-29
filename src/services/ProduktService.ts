@@ -5,6 +5,7 @@ import {
   collection,
   doc,
   getDocs,
+  getDoc,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -105,6 +106,44 @@ export class ProduktService {
       
     } catch (error) {
       console.error('ProduktService: Błąd pobierania produktów:', error);
+      throw error;
+    }
+  }
+
+  // 🔍 Pobieranie pojedynczego produktu po ID
+  static async getProduktById(
+    spizarniaId: string,
+    produktId: string,
+    userId: string
+  ): Promise<Produkt | null> {
+    try {
+      console.log('ProduktService: Pobieranie produktu:', produktId);
+      
+      // Sprawdź uprawnienia
+      const hasPermission = await SpizarniaService.checkPermission(spizarniaId, userId, 'view');
+      if (!hasPermission) {
+        throw new Error('Brak uprawnień do przeglądania tej spiżarni');
+      }
+      
+      const produktDoc = doc(db, 'spiżarnie', spizarniaId, 'produkty', produktId);
+      const docSnap = await getDoc(produktDoc);
+      
+      if (!docSnap.exists()) {
+        console.log('ProduktService: Produkt nie znaleziony:', produktId);
+        return null;
+      }
+      
+      const data = docSnap.data() as Omit<Produkt, 'id'>;
+      const produkt: Produkt = {
+        id: docSnap.id,
+        ...data
+      };
+      
+      console.log('ProduktService: Pobrano produkt:', produkt);
+      return produkt;
+      
+    } catch (error) {
+      console.error('ProduktService: Błąd pobierania produktu:', error);
       throw error;
     }
   }

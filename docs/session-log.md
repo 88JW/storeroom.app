@@ -936,4 +936,22 @@ src/
 - **Rezultat:** Pasek zawiera teraz 4 przyciski: Home, Alerty, Ustawienia, Wyjście
 - **Auto-detection:** Przycisk Home jest aktywny na stronie `/spiżarnie` i root `/`
 
+#### **7. Implementacja ProductDetailsPage** ✅
+- **Żądanie użytkownika:** "zajmi się na raz 2 i 3" (szczegóły produktu + usuwanie)
+- **Analiza:** Odkryto że skaner kodów i edycja już działają, usuwanie jest w EditProductPage
+- **Implementacja:**
+  - Dodano metodę `getProduktById()` do ProduktService
+  - Stworzono `ProductDetailsPage.tsx` (324 linie) - kompletna strona szczegółów
+  - Dodano routing `/produkt/:id` w main.tsx
+  - Przycisk "Usuń" z dialog potwierdzenia
+  - Przycisk "Edytuj" przekierowujący do EditProductPage
+- **Funkcjonalności:**
+  - Pełne szczegóły produktu z ikonami kategorii
+  - Status daty ważności z kolorami (czerwony/pomarańczowy/zielony)
+  - Informacje: ilość, kategoria, lokalizacja, notatki, data dodania
+  - Usuwanie produktu z potwierdzeniem
+  - Edytowanie (przekierowanie)
+  - Responsywny design Material-UI
+- **Rezultat:** Kliknięcie na kartę produktu otwiera szczegóły, pełne zarządzanie produktem
+
 *Zakończono: 29 lipca 2025*
