@@ -119,10 +119,14 @@ export class ImageRecognitionService {
       return result;
     } catch (error) {
       console.error('Błąd rozpoznawania produktu:', error);
+      
+      // TYMCZASOWY FALLBACK - pokaż błąd użytkownikowi
       return {
-        confidence: 0,
+        productName: 'Błąd AI - spróbuj ponownie',
+        category: 'Inne',
+        confidence: 0.1,
         recognitionMethod: 'manual',
-        rawText: 'Błąd rozpoznawania'
+        rawText: `Błąd: ${error instanceof Error ? error.message : 'Nieznany błąd'}`
       };
     }
   }
@@ -174,6 +178,7 @@ export class ImageRecognitionService {
       });
 
       console.log('✅ OCR zakończone!', result.data.text);
+      console.log('📊 OCR Confidence:', result.data.confidence);
 
       // Konwertuj wyniki Tesseract na nasz format - tylko główny tekst
       const ocrResults: OCRResult[] = [];
@@ -263,6 +268,7 @@ export class ImageRecognitionService {
    */
   private static analyzeTextForProduct(ocrResults: OCRResult[]): Partial<ProductRecognitionResult> {
     const allText = ocrResults.map(r => r.text).join(' ').toLowerCase();
+    console.log('🔍 Analizuję tekst:', allText);
     
     // Słownik produktów z kategoriami
     const productCategories: Record<string, string> = {
@@ -307,14 +313,17 @@ export class ImageRecognitionService {
     // Znajdź datę ważności
     const expiryDate = this.findExpiryDateInText(ocrResults);
 
-    return {
+    const result = {
       productName: bestMatch ? this.capitalizeFirst(bestMatch) : undefined,
       category: bestCategory || undefined,
       brand: detectedBrand ? this.capitalizeFirst(detectedBrand) : undefined,
       expiryDate: expiryDate || undefined,
       confidence: bestMatch ? 0.8 : 0.3,
-      recognitionMethod: 'text'
+      recognitionMethod: 'text' as const
     };
+    
+    console.log('📝 Wynik analizy tekstu:', result);
+    return result;
   }
 
   /**
