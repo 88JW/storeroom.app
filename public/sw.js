@@ -1,9 +1,9 @@
 // 🚀 Storeroom App - Service Worker
 // Progressive Web App functionality
 
-const CACHE_NAME = 'storeroom-v1';
-const STATIC_CACHE_NAME = 'storeroom-static-v1';
-const DYNAMIC_CACHE_NAME = 'storeroom-dynamic-v1';
+const CACHE_NAME = 'storeroom-v2';
+const STATIC_CACHE_NAME = 'storeroom-static-v2';
+const DYNAMIC_CACHE_NAME = 'storeroom-dynamic-v2';
 
 // 📦 Pliki do cache'owania statycznego
 const STATIC_FILES = [
