@@ -14,6 +14,7 @@ import { KATEGORIE, JEDNOSTKI } from '../../types';
 import { useSpizarniaLokalizacje } from '../../hooks/useSpizarniaLokalizacje';
 import { BarcodeScanner } from '../barcode/BarcodeScanner';
 import { EnhancedBarcodeService } from '../../services/EnhancedBarcodeService';
+import ProductFromImage from '../ProductFromImage';
 
 interface ProductFormData {
   nazwa: string;
@@ -94,6 +95,25 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     }
     
     setScannerOpen(false);
+  };
+
+  // 📸 Funkcja obsługi rozpoznanego produktu z obrazu
+  const handleProductRecognized = (productData: {
+    name: string;
+    category: string;
+    brand?: string;
+    expiryDate?: Date;
+  }) => {
+    if (onBarcodeData) {
+      onBarcodeData({
+        nazwa: productData.name,
+        kategoria: productData.category,
+        marka: productData.brand,
+        dataWażności: productData.expiryDate 
+          ? productData.expiryDate.toISOString().split('T')[0] 
+          : ''
+      });
+    }
   };
 
   return (
@@ -220,6 +240,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           {error}
         </Alert>
       )}
+
+      {/* 📸 Rozpoznawanie produktu z obrazu */}
+      <Box sx={{ mb: 3 }}>
+        <ProductFromImage 
+          onProductRecognized={handleProductRecognized}
+        />
+      </Box>
 
       {/* Informacja o spiżarni */}
       {spizarniaNazwa && (

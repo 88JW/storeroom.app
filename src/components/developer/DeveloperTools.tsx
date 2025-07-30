@@ -340,7 +340,17 @@ const DeveloperTools: React.FC = () => {
             onClick={handleTestCamera}
             color="info"
           >
-            📷 Test kamery
+            📱 Test aparatu i skanera
+          </Button>
+          <Button
+            variant="outlined"
+            fullWidth
+            startIcon={<CameraIcon />}
+            onClick={() => navigate('/demo-rozpoznawanie')}
+            color="secondary"
+            sx={{ borderColor: 'secondary.main' }}
+          >
+            📸 Demo rozpoznawania obrazów
           </Button>
         </Box>
 

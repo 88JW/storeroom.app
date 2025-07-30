@@ -18,6 +18,7 @@ import SettingsPage from './pages/SettingsPage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ExpiryAlertsPage from './pages/ExpiryAlertsPage';
+import ImageRecognitionDemo from './pages/ImageRecognitionDemo';
 
 // 📱 PWA Initialization
 console.log('🚀 Storeroom App starting...');
@@ -31,8 +32,8 @@ if ('serviceWorker' in navigator) {
 
 // Log app version and build info
 console.log('📱 App Info:', {
-  version: '1.0.0',
-  build: 'PWA-ready',
+  version: '1.3.0',
+  build: 'PWA-ready + Image Recognition',
   timestamp: new Date().toISOString()
 });
 
@@ -117,6 +118,14 @@ createRoot(document.getElementById('root')!).render(
             element={
               <ProtectedRoute>
                 <ExpiryAlertsPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/demo-rozpoznawanie" 
+            element={
+              <ProtectedRoute>
+                <ImageRecognitionDemo />
               </ProtectedRoute>
             } 
           />
