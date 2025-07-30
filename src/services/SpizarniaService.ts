@@ -24,8 +24,6 @@ export class SpizarniaService {
   // 📋 Pobieranie listy spiżarni użytkownika
   static async getUserSpiżarnie(userId: string): Promise<{ id: string; data: UserSpizarnia; metadata: SpizarniaMetadata }[]> {
     try {
-      console.log('SpizarniaService: Pobieranie spiżarni dla użytkownika:', userId);
-      
       // Pobierz wszystkie spiżarnie użytkownika
       const userSpizarnieRef = collection(db, 'users', userId, 'spiżarnie');
       const userSpizarnieSnapshot = await getDocs(userSpizarnieRef);
@@ -50,7 +48,6 @@ export class SpizarniaService {
         }
       }
       
-      console.log('SpizarniaService: Pobrano spiżarnie:', spiżarnie);
       return spiżarnie;
       
     } catch (error) {

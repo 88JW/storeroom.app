@@ -11,7 +11,13 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
+  ListIte          <Typography variant="body1" color="text.secondary">
+            Ładowanie alertów...
+          </Typography>
+        </Box>
+        <AppBottomNavigation />
+      </Container>
+    );aryAction,
   IconButton,
   Divider,
   Fab

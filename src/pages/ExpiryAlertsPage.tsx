@@ -298,29 +298,31 @@ const ExpiryAlertsPage: React.FC = () => {
                       }}
                     >
                       <ListItemText
+                        primaryTypographyProps={{ component: 'div' }}
+                        secondaryTypographyProps={{ component: 'div' }}
                         primary={
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                            <Typography variant="subtitle1" fontWeight="bold">
+                          <Box component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                            <Typography variant="subtitle1" fontWeight="bold" component="span">
                               {produkt.nazwa}
                             </Typography>
                             {expiryInfo.chip}
                           </Box>
                         }
                         secondary={
-                          <Box>
-                            <Typography variant="body2" color="text.secondary" fontWeight="bold">
+                          <Box component="div">
+                            <Typography variant="body2" color="text.secondary" fontWeight="bold" component="div">
                               📍 {produkt.spizarniaName} • {produkt.lokalizacjaNazwa}
                             </Typography>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" color="text.secondary" component="div">
                               📅 Data ważności: {formatExpiryDate(produkt.dataWażności)}
                             </Typography>
                             {produkt.ilość && (
-                              <Typography variant="body2" color="text.secondary">
+                              <Typography variant="body2" color="text.secondary" component="div">
                                 📦 Ilość: {produkt.ilość} {produkt.jednostka || ''}
                               </Typography>
                             )}
                             {produkt.kategoria && (
-                              <Typography variant="body2" color="text.secondary">
+                              <Typography variant="body2" color="text.secondary" component="div">
                                 🏷️ Kategoria: {produkt.kategoria}
                               </Typography>
                             )}

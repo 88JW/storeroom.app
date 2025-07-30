@@ -23,7 +23,7 @@ import {
   Delete
 } from '@mui/icons-material';
 import { ShareCodeManager } from '../sharing/ShareCodeManager';
-import { styleUtils, designTokens } from '../../theme/appTheme';
+import { designTokens } from '../../theme/appTheme';
 
 interface SpizarniaCardProps {
   id: string;

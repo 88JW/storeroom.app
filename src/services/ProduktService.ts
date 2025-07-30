@@ -35,8 +35,6 @@ export class ProduktService {
     sortowanie?: ProduktSortowanie
   ): Promise<Produkt[]> {
     try {
-      console.log('ProduktService: Pobieranie produktów dla spiżarni:', spizarniaId);
-      
       // Sprawdź uprawnienia
       const hasPermission = await SpizarniaService.checkPermission(spizarniaId, userId, 'view');
       if (!hasPermission) {
@@ -68,9 +66,6 @@ export class ProduktService {
         queryConstraints.push(orderBy('dataDodania', 'desc'));
       }
       
-      console.log('ProduktService: Aplikowanie filtrów:', filtr);
-      console.log('ProduktService: Aplikowanie sortowania:', sortowanie);
-      
       const q = query(produktyRef, ...queryConstraints);
       const snapshot = await getDocs(q);
       
@@ -101,7 +96,6 @@ export class ProduktService {
         });
       }
       
-      console.log('ProduktService: Pobrano produkty:', produkty.length);
       return produkty;
       
     } catch (error) {

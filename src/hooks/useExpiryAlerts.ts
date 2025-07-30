@@ -22,7 +22,7 @@ export const useExpiryAlerts = (): ExpiryAlerts => {
     expiring: 0,
     soonExpiring: 0,
     total: 0,
-    loading: false,
+    loading: true, // Startuj z loading: true
     error: null
   });
 
