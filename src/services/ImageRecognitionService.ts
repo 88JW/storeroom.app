@@ -1,5 +1,12 @@
 // 📸 Serwis rozpoznawania produktów z zdjęć i OCR
 
+// 🚀 Tesseract.js - darmowe OCR (działa offline!)
+import Tesseract from 'tesseract.js';
+
+// 🧠 TensorFlow.js - darmowe rozpoznawanie obiektów
+import * as tf from '@tensorflow/tfjs';
+import * as cocoSsd from '@tensorflow-models/coco-ssd';
+
 // Firebase Storage (future implementation)
 // import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 // import { storage } from '../firebase';
@@ -73,11 +80,22 @@ export interface ReceiptItem {
 }
 
 export class ImageRecognitionService {
-  private static readonly GOOGLE_VISION_API_KEY = process.env.VITE_GOOGLE_VISION_API_KEY;
-  private static readonly OCR_API_URL = 'https://vision.googleapis.com/v1/images:annotate';
+  private static objectDetectionModel: cocoSsd.ObjectDetection | null = null;
 
   /**
-   * 📸 Rozpoznaje produkty z przesłanego obrazu
+   * 🧠 Inicjalizuje model TensorFlow.js (tylko raz)
+   */
+  private static async loadObjectDetectionModel(): Promise<void> {
+    if (!this.objectDetectionModel) {
+      console.log('🚀 Ładowanie modelu TensorFlow.js...');
+      await tf.ready();
+      this.objectDetectionModel = await cocoSsd.load();
+      console.log('✅ Model TensorFlow.js załadowany!');
+    }
+  }
+
+  /**
+   * 📸 Rozpoznaje produkty z przesłanego obrazu - teraz używa prawdziwego AI!
    */
   static async recognizeProductFromImage(
     imageFile: File
@@ -86,19 +104,16 @@ export class ImageRecognitionService {
       // 1. Upload obrazu do Firebase Storage (dla przyszłych potrzeb)
       // const imageUrl = await this.uploadImageToStorage(imageFile, userId);
       
-      // 2. Konwertuj obraz do base64 dla API
-      const base64Image = await this.fileToBase64(imageFile);
+      // 2. Rozpoznawanie tekstu (OCR) - bezpośrednio z pliku
+      const ocrResults = await this.performOCR(imageFile);
       
-      // 3. Rozpoznawanie tekstu (OCR)
-      const ocrResults = await this.performOCR(base64Image);
-      
-      // 4. Analiza rozpoznanego tekstu
+      // 3. Analiza rozpoznanego tekstu
       const productInfo = this.analyzeTextForProduct(ocrResults);
       
-      // 5. Rozpoznawanie obiektów (jeśli dostępne)
-      const objectResults = await this.detectObjects(base64Image);
+      // 4. Rozpoznawanie obiektów - TensorFlow.js
+      const objectResults = await this.detectObjects(imageFile);
       
-      // 6. Połączenie wyników
+      // 5. Połączenie wyników
       const result = this.combineRecognitionResults(productInfo, objectResults, ocrResults);
       
       return result;
@@ -117,8 +132,7 @@ export class ImageRecognitionService {
    */
   static async scanReceipt(imageFile: File): Promise<ReceiptData> {
     try {
-      const base64Image = await this.fileToBase64(imageFile);
-      const ocrResults = await this.performOCR(base64Image);
+      const ocrResults = await this.performOCR(imageFile);
       
       return this.parseReceiptFromText(ocrResults);
     } catch (error) {
@@ -134,8 +148,7 @@ export class ImageRecognitionService {
    */
   static async extractExpiryDate(imageFile: File): Promise<Date | null> {
     try {
-      const base64Image = await this.fileToBase64(imageFile);
-      const ocrResults = await this.performOCR(base64Image);
+      const ocrResults = await this.performOCR(imageFile);
       
       return this.findExpiryDateInText(ocrResults);
     } catch (error) {
@@ -145,117 +158,104 @@ export class ImageRecognitionService {
   }
 
   /**
-   * 🔤 Wykonuje OCR na obrazie
+   * 🔤 Wykonuje OCR na obrazie - używa Tesseract.js (darmowo!)
    */
-  private static async performOCR(base64Image: string): Promise<OCRResult[]> {
-    if (!this.GOOGLE_VISION_API_KEY) {
-      console.warn('Brak klucza Google Vision API - używam mock danych');
-      return this.getMockOCRResults();
-    }
-
+  private static async performOCR(imageFile: File): Promise<OCRResult[]> {
     try {
-      const response = await fetch(`${this.OCR_API_URL}?key=${this.GOOGLE_VISION_API_KEY}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          requests: [{
-            image: {
-              content: base64Image.split(',')[1] // Usuń prefix data:image/...
-            },
-            features: [
-              { type: 'TEXT_DETECTION', maxResults: 50 },
-              { type: 'DOCUMENT_TEXT_DETECTION', maxResults: 50 }
-            ]
-          }]
-        })
+      console.log('🔍 Rozpoczynam OCR z Tesseract.js...');
+      
+      // Tesseract.js obsługuje bezpośrednio pliki File
+      const result = await Tesseract.recognize(imageFile, 'pol+eng', {
+        logger: m => {
+          if (m.status === 'recognizing text') {
+            console.log(`OCR Progress: ${Math.round(m.progress * 100)}%`);
+          }
+        }
       });
 
-      const data = await response.json();
+      console.log('✅ OCR zakończone!', result.data.text);
+
+      // Konwertuj wyniki Tesseract na nasz format - tylko główny tekst
+      const ocrResults: OCRResult[] = [];
       
-      if (data.responses?.[0]?.textAnnotations) {
-        return data.responses[0].textAnnotations.map((annotation: GoogleVisionTextAnnotation) => ({
-          text: annotation.description,
-          confidence: 0.9, // Google nie zawsze zwraca confidence
-          boundingBox: {
-            x: annotation.boundingPoly?.vertices?.[0]?.x || 0,
-            y: annotation.boundingPoly?.vertices?.[0]?.y || 0,
-            width: Math.abs((annotation.boundingPoly?.vertices?.[2]?.x || 0) - (annotation.boundingPoly?.vertices?.[0]?.x || 0)),
-            height: Math.abs((annotation.boundingPoly?.vertices?.[2]?.y || 0) - (annotation.boundingPoly?.vertices?.[0]?.y || 0))
-          }
-        }));
+      // Główny tekst
+      if (result.data.text.trim()) {
+        ocrResults.push({
+          text: result.data.text.trim(),
+          confidence: result.data.confidence / 100, // Tesseract zwraca 0-100, my chcemy 0-1
+          boundingBox: { x: 0, y: 0, width: 100, height: 100 }
+        });
       }
 
-      return [];
+      return ocrResults;
     } catch (error) {
-      console.error('Błąd OCR:', error);
-      return this.getMockOCRResults();
+      console.error('❌ Błąd OCR Tesseract:', error);
+      return [];
     }
   }
 
   /**
-   * 🎯 Rozpoznaje obiekty na obrazie
+   * 🎯 Rozpoznaje obiekty na obrazie - używa TensorFlow.js (darmowo!)
    */
-  private static async detectObjects(base64Image: string): Promise<DetectedObject[]> {
-    if (!this.GOOGLE_VISION_API_KEY) {
-      return this.getMockObjectResults();
-    }
-
+  private static async detectObjects(imageFile: File): Promise<DetectedObject[]> {
     try {
-      const response = await fetch(`${this.OCR_API_URL}?key=${this.GOOGLE_VISION_API_KEY}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          requests: [{
-            image: {
-              content: base64Image.split(',')[1]
-            },
-            features: [
-              { type: 'OBJECT_LOCALIZATION', maxResults: 20 },
-              { type: 'LABEL_DETECTION', maxResults: 20 }
-            ]
-          }]
-        })
-      });
-
-      const data = await response.json();
-      const objects: DetectedObject[] = [];
-
-      // Obiekty z lokalizacją
-      if (data.responses?.[0]?.localizedObjectAnnotations) {
-        data.responses[0].localizedObjectAnnotations.forEach((obj: GoogleVisionObjectAnnotation) => {
-          objects.push({
-            name: obj.name,
-            confidence: obj.score,
-            boundingBox: {
-              x: (obj.boundingPoly?.normalizedVertices?.[0]?.x ?? 0) * 100,
-              y: (obj.boundingPoly?.normalizedVertices?.[0]?.y ?? 0) * 100,
-              width: ((obj.boundingPoly?.normalizedVertices?.[2]?.x ?? 0) - (obj.boundingPoly?.normalizedVertices?.[0]?.x ?? 0)) * 100,
-              height: ((obj.boundingPoly?.normalizedVertices?.[2]?.y ?? 0) - (obj.boundingPoly?.normalizedVertices?.[0]?.y ?? 0)) * 100
-            }
-          });
-        });
+      console.log('🧠 Rozpoczynam rozpoznawanie obiektów z TensorFlow.js...');
+      
+      // Załaduj model (jeśli jeszcze nie załadowany)
+      await this.loadObjectDetectionModel();
+      
+      if (!this.objectDetectionModel) {
+        console.error('❌ Model TensorFlow nie został załadowany');
+        return [];
       }
 
-      // Etykiety bez lokalizacji
-      if (data.responses?.[0]?.labelAnnotations) {
-        data.responses[0].labelAnnotations.forEach((label: GoogleVisionLabelAnnotation) => {
-          objects.push({
-            name: label.description,
-            confidence: label.score,
-            boundingBox: { x: 0, y: 0, width: 100, height: 100 }
-          });
-        });
-      }
+      // Stwórz element img z pliku
+      const imageElement = await this.createImageElement(imageFile);
+      
+      // Rozpoznaj obiekty
+      const predictions = await this.objectDetectionModel.detect(imageElement);
+      
+      console.log('✅ Rozpoznano obiekty:', predictions);
+      
+      // Konwertuj wyniki TensorFlow na nasz format
+      const detectedObjects: DetectedObject[] = predictions.map(prediction => ({
+        name: prediction.class,
+        confidence: prediction.score,
+        boundingBox: {
+          x: prediction.bbox[0],
+          y: prediction.bbox[1],
+          width: prediction.bbox[2],
+          height: prediction.bbox[3]
+        }
+      }));
 
-      return objects;
+      return detectedObjects;
     } catch (error) {
-      console.error('Błąd rozpoznawania obiektów:', error);
-      return this.getMockObjectResults();
+      console.error('❌ Błąd rozpoznawania obiektów TensorFlow:', error);
+      return [];
     }
+  }
+
+  /**
+   * 🖼️ Tworzy element Image z pliku File
+   */
+  private static createImageElement(file: File): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      
+      img.onload = () => {
+        URL.revokeObjectURL(url); // Zwolnij pamięć
+        resolve(img);
+      };
+      
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Nie można załadować obrazu'));
+      };
+      
+      img.src = url;
+    });
   }
 
   /**
@@ -477,18 +477,6 @@ export class ImageRecognitionService {
   }
 
   /**
-   *  Konwertuje plik do base64
-   */
-  private static fileToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
-    });
-  }
-
-  /**
    * 🎯 Zgaduje kategorię na podstawie nazwy
    */
   private static guessCategoryFromName(name: string): string {
@@ -520,46 +508,6 @@ export class ImageRecognitionService {
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   }
 
-  /**
-   * 🎭 Mock dane OCR dla testów
-   */
-  private static getMockOCRResults(): OCRResult[] {
-    return [
-      {
-        text: 'MLEKO UHT 3.2%',
-        confidence: 0.95,
-        boundingBox: { x: 10, y: 20, width: 200, height: 30 }
-      },
-      {
-        text: 'Najlepsze przed: 15.08.2025',
-        confidence: 0.88,
-        boundingBox: { x: 10, y: 60, width: 180, height: 25 }
-      },
-      {
-        text: 'MLEKPOL',
-        confidence: 0.92,
-        boundingBox: { x: 10, y: 100, width: 120, height: 35 }
-      }
-    ];
-  }
-
-  /**
-   * 🎭 Mock dane rozpoznawania obiektów
-   */
-  private static getMockObjectResults(): DetectedObject[] {
-    return [
-      {
-        name: 'Milk',
-        confidence: 0.89,
-        boundingBox: { x: 20, y: 30, width: 60, height: 80 }
-      },
-      {
-        name: 'Food',
-        confidence: 0.75,
-        boundingBox: { x: 15, y: 25, width: 70, height: 90 }
-      }
-    ];
-  }
 }
 
 export default ImageRecognitionService;
