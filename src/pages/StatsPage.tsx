@@ -16,14 +16,11 @@ import {
   ListItemIcon,
   Button,
   Alert,
-  CircularProgress,
-  Divider
+  CircularProgress
 } from '@mui/material';
 import {
   TrendingUp,
   Warning,
-  CheckCircle,
-  PieChart,
   Download,
   Refresh,
   Category,
@@ -33,7 +30,7 @@ import {
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
-import { appTheme, designTokens } from '../../theme/appTheme';
+import { appTheme } from '../../theme/appTheme';
 import { PageHeader } from '../../components/common/PageHeader';
 import { AppBottomNavigation } from '../../components/common/AppBottomNavigation';
 import { useAuth } from '../../hooks/useAuth';

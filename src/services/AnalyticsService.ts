@@ -4,10 +4,7 @@ import {
   collection, 
   query, 
   where, 
-  getDocs, 
-  orderBy, 
-  limit,
-  Timestamp 
+  getDocs
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Produkt } from '../types';
@@ -163,7 +160,7 @@ export class AnalyticsService {
    */
   private static calculateLocationStats(produkty: Produkt[]): LocationStats[] {
     const locationCount = produkty.reduce((acc, produkt) => {
-      const location = produkt.lokalizacjaNazwa || 'Nie określono';
+      const location = produkt.lokalizacja || 'Nie określono';
       acc[location] = (acc[location] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
@@ -190,7 +187,8 @@ export class AnalyticsService {
   /**
    * 📈 Oblicza trendy miesięczne
    */
-  private static async calculateMonthlyTrends(spizarniaId: string, userId: string): Promise<MonthlyStats[]> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private static async calculateMonthlyTrends(_spizarniaId: string, _userId: string): Promise<MonthlyStats[]> {
     // TODO: Implementacja wymaga dodatkowej kolekcji 'product_history'
     // która będzie śledząć dodawanie/usuwanie produktów
     
@@ -218,7 +216,8 @@ export class AnalyticsService {
   /**
    * 🗑️ Oblicza statystyki marnowania
    */
-  private static async calculateWasteStats(spizarniaId: string, userId: string): Promise<WasteStats> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private static async calculateWasteStats(_spizarniaId: string, _userId: string): Promise<WasteStats> {
     // TODO: Implementacja wymaga śledzenia usuniętych produktów z powodem
     
     return {
@@ -253,10 +252,10 @@ export class AnalyticsService {
       }
       
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, { productName: string; frequency: number; lastAdded: Date; count: number; totalDays: number }>);
 
     return Object.values(productFrequency)
-      .map((product: any) => ({
+      .map((product: { productName: string; frequency: number; lastAdded: Date; count: number; totalDays: number }) => ({
         productName: product.productName,
         frequency: product.frequency,
         lastAdded: product.lastAdded,
@@ -269,7 +268,8 @@ export class AnalyticsService {
   /**
    * 📊 Generuje raport PDF z statystykami
    */
-  static async generateStatsReport(spizarniaId: string, userId: string): Promise<Blob> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static async generateStatsReport(_spizarniaId: string, _userId: string): Promise<Blob> {
     // TODO: Implementacja generowania PDF
     throw new Error('Funkcja w przygotowaniu');
   }

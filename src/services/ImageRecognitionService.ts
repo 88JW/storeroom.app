@@ -1,7 +1,8 @@
 // 📸 Serwis rozpoznawania produktów z zdjęć i OCR
 
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '../firebase';
+// Firebase Storage (future implementation)
+// import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+// import { storage } from '../firebase';
 
 export interface ProductRecognitionResult {
   productName?: string;
@@ -476,19 +477,7 @@ export class ImageRecognitionService {
   }
 
   /**
-   * 📤 Upload obrazu do Firebase Storage (na przyszłość)
-   */
-  private static async uploadImageToStorage(file: File, userId: string): Promise<string> {
-    const timestamp = Date.now();
-    const fileName = `product-images/${userId}/${timestamp}-${file.name}`;
-    const storageRef = ref(storage, fileName);
-    
-    await uploadBytes(storageRef, file);
-    return await getDownloadURL(storageRef);
-  }
-
-  /**
-   * 🔄 Konwertuje plik do base64
+   *  Konwertuje plik do base64
    */
   private static fileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {

@@ -199,8 +199,8 @@ export class ShoppingListService {
    * 📊 Sugestie na podstawie historii
    */
   private static async getHistoryBasedSuggestions(
-    userId: string, 
-    spizarniaId: string
+    _userId: string, 
+    _spizarniaId: string
   ): Promise<ProductSuggestion[]> {
     // TODO: Analiza historii dodawanych produktów
     // Sprawdź jakie produkty użytkownik najczęściej dodaje
@@ -265,8 +265,8 @@ export class ShoppingListService {
    * 🔗 Sugestie komplementarne
    */
   private static async getComplementarySuggestions(
-    userId: string, 
-    spizarniaId: string
+    _userId: string, 
+    _spizarniaId: string
   ): Promise<ProductSuggestion[]> {
     // TODO: Sprawdź co jest w spiżarni i zasugeruj komplementarne produkty
     
@@ -370,7 +370,7 @@ export class ShoppingListService {
   /**
    * 📊 Generuje statystyki zakupów
    */
-  static async getShoppingStats(userId: string): Promise<{
+  static async getShoppingStats(_userId: string): Promise<{
     totalLists: number;
     completedLists: number;
     totalSpent: number;

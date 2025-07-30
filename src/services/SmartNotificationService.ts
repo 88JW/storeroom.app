@@ -27,7 +27,7 @@ export interface SmartNotification {
   createdAt: Timestamp;
   scheduledFor?: Timestamp;
   relatedProductId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export type NotificationType = 
@@ -74,7 +74,6 @@ export class SmartNotificationService {
     try {
       const produkty = await this.getSpizarniaProdukty(spizarniaId, userId);
       const notifications: SmartNotification[] = [];
-      const now = new Date();
 
       // 1. Powiadomienia o terminie ważności
       const expiryNotifications = this.generateExpiryNotifications(produkty, spizarniaId, userId);
@@ -197,7 +196,7 @@ export class SmartNotificationService {
       return acc;
     }, {} as Record<string, Produkt[]>);
 
-    Object.entries(productGroups).forEach(([productName, products]) => {
+    Object.entries(productGroups).forEach(([_productName, products]) => {
       const totalQuantity = products.reduce((sum, p) => {
         const quantity = parseFloat(p.ilość?.toString() || '0');
         return sum + (isNaN(quantity) ? 0 : quantity);
@@ -392,7 +391,7 @@ export class SmartNotificationService {
   /**
    * 📖 Pobiera powiadomienia użytkownika
    */
-  static async getUserNotifications(userId: string, limit: number = 20): Promise<SmartNotification[]> {
+  static async getUserNotifications(userId: string, _limit: number = 20): Promise<SmartNotification[]> {
     const notificationsRef = collection(db, 'notifications');
     const q = query(
       notificationsRef,
