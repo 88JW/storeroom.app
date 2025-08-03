@@ -245,7 +245,17 @@ const ProductListPage: React.FC = () => {
               </Typography>
             </Box>
           ) : (
-            <Box>
+            <Box 
+              sx={{ 
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  md: 'repeat(auto-fill, minmax(300px, 1fr))'
+                },
+                gap: { xs: 1.5, md: 3 },
+                py: 2
+              }}
+            >
               {filteredProdukty.map((produkt) => (
                 <ProductCard 
                   key={produkt.id} 
