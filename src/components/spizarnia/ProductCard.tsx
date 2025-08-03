@@ -5,9 +5,10 @@ import {
   Avatar,
   Typography,
   Box,
-  IconButton
+  IconButton,
+  Tooltip
 } from '@mui/material';
-import { Kitchen, Edit } from '@mui/icons-material';
+import { Kitchen, Edit, Delete } from '@mui/icons-material';
 import { styleUtils, designTokens } from '../../theme/appTheme';
 import type { Produkt } from '../../types';
 
@@ -15,12 +16,14 @@ interface ProductCardProps {
   produkt: Produkt;
   onClick?: (produkt: Produkt) => void;
   onEdit?: (produkt: Produkt) => void;
+  onDelete?: (produkt: Produkt) => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ 
   produkt, 
   onClick,
-  onEdit 
+  onEdit,
+  onDelete
 }) => {
   // 📅 Funkcja do obliczania dni do wygaśnięcia
   const getDaysUntilExpiry = (dataWażności?: Date | { toDate: () => Date }): { 
@@ -61,6 +64,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
+  const handleDelete = (event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent card click
+    if (onDelete) {
+      onDelete(produkt);
+    }
+  };
+
   return (
     <Card
       onClick={handleClick}
@@ -84,6 +94,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             transform: 'scale(1.05)',
           },
           '& .edit-button': {
+            opacity: 1,
+            transform: 'translateX(0)',
+          },
+          '& .delete-button': {
             opacity: 1,
             transform: 'translateX(0)',
           }
@@ -138,15 +152,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             variant="subtitle1" 
             sx={{ 
               fontWeight: 'bold', 
-              color: designTokens.colors.text.primary,
+              color: '#000000', // Czarny kolor dla lepszej widoczności
               mb: 0.5,
               fontSize: { xs: '0.95rem', sm: '1.1rem' },
               lineHeight: 1.3,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              // Zapewniamy widoczność tekstu
-              textShadow: '0 1px 2px rgba(255,255,255,0.8)'
+              // Zapewniamy widoczność tekstu na każdym tle
+              textShadow: 'none'
             }}
           >
             {produkt.nazwa}
@@ -205,36 +219,67 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               📍 {produkt.lokalizacja}
             </Box>
           )}
-        </Box>
 
-        {/* 🖊️ Edit Button - tylko na desktop, na mobile ukryty */}
-        {onEdit && (
-          <IconButton
-            className="edit-button"
-            onClick={handleEdit}
-            size="small"
-            sx={{ 
-              position: { xs: 'absolute', sm: 'static' },
-              top: { xs: 8, sm: 'auto' },
-              right: { xs: 8, sm: 'auto' },
-              ml: { xs: 0, sm: 1 },
-              opacity: { xs: 0.7, sm: 0 },
-              transform: { xs: 'none', sm: 'translateX(8px)' },
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              color: designTokens.colors.primary.main,
-              bgcolor: { xs: 'rgba(255,255,255,0.9)', sm: 'transparent' },
-              backdropFilter: { xs: 'blur(4px)', sm: 'none' },
-              width: { xs: 32, sm: 40 },
-              height: { xs: 32, sm: 40 },
-              '&:hover': {
-                bgcolor: { xs: 'rgba(255,255,255,1)', sm: 'rgba(25, 147, 229, 0.1)' },
-                transform: { xs: 'scale(1.1)', sm: 'translateX(0) scale(1.1)' },
-              }
-            }}
-          >
-            <Edit fontSize="small" />
-          </IconButton>
-        )}
+          {/* 🔧 Action Buttons Container - umieszczony pod lokalizacją */}
+          <Box sx={{ 
+            display: 'flex', 
+            gap: 0.5,
+            mt: 0.5,
+            // Na desktop ukryte, na mobile widoczne, ale mniejsze
+            opacity: { xs: 1, sm: 0 },
+            transform: { xs: 'none', sm: 'translateX(8px)' },
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}>
+            
+            {/* 🗑️ Delete Button */}
+            {onDelete && (
+              <Tooltip title="Usuń produkt" placement="top">
+                <IconButton
+                  className="delete-button"
+                  onClick={handleDelete}
+                  size="small"
+                  sx={{ 
+                    color: designTokens.colors.status.error,
+                    bgcolor: { xs: 'rgba(255,255,255,0.9)', sm: 'transparent' },
+                    backdropFilter: { xs: 'blur(4px)', sm: 'none' },
+                    width: { xs: 24, sm: 36 },
+                    height: { xs: 24, sm: 36 },
+                    '&:hover': {
+                      bgcolor: { xs: 'rgba(255,255,255,1)', sm: 'rgba(239, 68, 68, 0.1)' },
+                      transform: 'scale(1.1)',
+                    }
+                  }}
+                >
+                  <Delete sx={{ fontSize: { xs: '16px', sm: '20px' } }} />
+                </IconButton>
+              </Tooltip>
+            )}
+
+            {/* 🖊️ Edit Button */}
+            {onEdit && (
+              <Tooltip title="Edytuj produkt" placement="top">
+                <IconButton
+                  className="edit-button"
+                  onClick={handleEdit}
+                  size="small"
+                  sx={{ 
+                    color: designTokens.colors.primary.main,
+                    bgcolor: { xs: 'rgba(255,255,255,0.9)', sm: 'transparent' },
+                    backdropFilter: { xs: 'blur(4px)', sm: 'none' },
+                    width: { xs: 24, sm: 36 },
+                    height: { xs: 24, sm: 36 },
+                    '&:hover': {
+                      bgcolor: { xs: 'rgba(255,255,255,1)', sm: 'rgba(25, 147, 229, 0.1)' },
+                      transform: 'scale(1.1)',
+                    }
+                  }}
+                >
+                  <Edit sx={{ fontSize: { xs: '16px', sm: '20px' } }} />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Box>
+        </Box>
       </CardContent>
     </Card>
   );

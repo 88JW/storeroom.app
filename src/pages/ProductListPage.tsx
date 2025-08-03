@@ -181,6 +181,42 @@ const ProductListPage: React.FC = () => {
     }
   };
 
+  const handleProductDelete = async (produkt: Produkt) => {
+    const spizarniaId = searchParams.get('spizarnia');
+    if (!spizarniaId || !user?.uid) {
+      console.error('Brak ID spiżarni lub użytkownika');
+      return;
+    }
+
+    try {
+      // Potwierdź usunięcie
+      const confirmed = window.confirm(`Czy na pewno chcesz usunąć "${produkt.nazwa}"?`);
+      if (!confirmed) return;
+
+      console.log('🗑️ Usuwanie produktu:', produkt.nazwa);
+      
+      // Usuń produkt z bazy danych
+      await ProduktService.deleteProdukt(spizarniaId, produkt.id!, user.uid);
+      
+      // Zaktualizuj lokalne listy
+      const updatedProdukty = produkty.filter(p => p.id !== produkt.id);
+      setProdukty(updatedProdukty);
+      setFilteredProdukty(updatedProdukty.filter(p => {
+        const matchesSearch = !searchQuery || 
+          p.nazwa.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.kategoria.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesFilter = selectedFilter === 'wszystko' || 
+          p.lokalizacja?.toLowerCase() === selectedFilter.toLowerCase();
+        return matchesSearch && matchesFilter;
+      }));
+
+      console.log('✅ Produkt usunięty pomyślnie');
+    } catch (error) {
+      console.error('❌ Błąd podczas usuwania produktu:', error);
+      alert('Wystąpił błąd podczas usuwania produktu. Spróbuj ponownie.');
+    }
+  };
+
   if (loading) {
     return (
       <ThemeProvider theme={appTheme}>
@@ -262,6 +298,7 @@ const ProductListPage: React.FC = () => {
                   produkt={produkt}
                   onClick={handleProductClick}
                   onEdit={handleProductEdit}
+                  onDelete={handleProductDelete}
                 />
               ))}
             </Box>
