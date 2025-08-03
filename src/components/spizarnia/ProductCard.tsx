@@ -146,7 +146,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <Box sx={{ 
           flexGrow: 1, 
           minWidth: 0, // Pozwala na text overflow
-          mr: 1
+          mr: { xs: 0.5, sm: 1 } // Mniej marginesu na mobile dla więcej miejsca na nazwę
         }}>
           <Typography 
             variant="subtitle1" 
@@ -154,7 +154,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               fontWeight: 'bold', 
               color: '#000000', // Czarny kolor dla lepszej widoczności
               mb: 0.5,
-              fontSize: { xs: '0.95rem', sm: '1.1rem' },
+              fontSize: { xs: '1rem', sm: '1.1rem' }, // Zwiększony rozmiar na mobile
               lineHeight: 1.3,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -203,24 +203,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             {expiryInfo.text}
           </Box>
           
-          {/* Lokalizacja */}
-          {produkt.lokalizacja && (
-            <Box
-              sx={{
-                px: 1,
-                py: 0.25,
-                borderRadius: '8px',
-                bgcolor: designTokens.colors.secondary.main,
-                color: designTokens.colors.text.secondary,
-                fontSize: { xs: '0.65rem', sm: '0.7rem' },
-                fontWeight: 500,
-              }}
-            >
-              📍 {produkt.lokalizacja}
-            </Box>
-          )}
-
-          {/* 🔧 Action Buttons Container - umieszczony pod lokalizacją */}
+          {/*  Action Buttons Container - zawsze widoczne po status chipie */}
           <Box sx={{ 
             display: 'flex', 
             gap: 0.5,
@@ -279,6 +262,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               </Tooltip>
             )}
           </Box>
+          
+          {/* Lokalizacja - ukryta na mobile */}
+          {produkt.lokalizacja && (
+            <Box
+              sx={{
+                display: { xs: 'none', sm: 'block' }, // Ukryta na mobile
+                px: 1,
+                py: 0.25,
+                borderRadius: '8px',
+                bgcolor: designTokens.colors.secondary.main,
+                color: designTokens.colors.text.secondary,
+                fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                fontWeight: 500,
+              }}
+            >
+              📍 {produkt.lokalizacja}
+            </Box>
+          )}
         </Box>
       </CardContent>
     </Card>
